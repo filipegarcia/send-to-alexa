@@ -12,8 +12,9 @@ final class ShareModel {
         case sending
         /// `playing` is what the Echo reports; `verified` means it matched the shared song.
         case sent(device: String, playing: String?, verified: Bool)
-        /// The Echo started something else, even after retries. The sheet stays open so the search can be edited.
-        case mismatched(device: String, playing: String)
+        /// The Echo started something else (or nothing, when `playing` is nil), even after retries.
+        /// The sheet stays open so the search can be edited.
+        case mismatched(device: String, playing: String?)
         case failed(String)
         case notSignedIn
     }
@@ -118,6 +119,8 @@ final class ShareModel {
             case .mismatched:
                 phrase = result.phrase
                 phase = .mismatched(device: device.accountName, playing: result.nowPlaying?.summary ?? "something else")
+            case .notStarted:
+                phase = .mismatched(device: device.accountName, playing: nil)
             }
         } catch {
             phase = .failed(error.localizedDescription)

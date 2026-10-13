@@ -126,9 +126,10 @@ GET https://alexa.<marketplace>/api/np/player?deviceSerialNumber=…&deviceType=
 
 until the `queueId`/title changes and `state == PLAYING` (8 s timeout). `subText1` is usually the artist but sometimes
 the album. A song matches when the normalised title is **equal** (so "(Live)"/"(Remix)" don't match; "(feat. …)" and
-"Remastered" are ignored) and `subText1` overlaps the artist credits or equals the album. On a mismatch it tries
-`ResolvedMusic.searchCandidates` in order (max 3): "X by Y", "the song X by Y", "X by Y from the album Z".
-If the user edited the phrase, it's played once and the result is only reported.
+"Remastered" are ignored) and `subText1` overlaps the artist credits or equals the album. On a mismatch, or if nothing
+new starts (Alexa found no match), it tries `ResolvedMusic.searchCandidates` in order (max 3). For pop songs that's
+"X by Y", "the song X by Y", "X by Y from the album Z". If the user edited the phrase, it's played once and the
+result is only reported.
 
 ## 5. Apple Music link → search phrase
 
@@ -141,6 +142,16 @@ The `?i=` track parameter turns an album link into a song. The resolver then tri
 
 Titles are cleaned of things that confuse voice search, such as `(feat. …)`, `(Remastered 2011)` and `- Single`.
 They're then phrased the way you'd say them: "Song by Artist", "the album X by Y", "the X playlist".
+
+`SearchPhrasing` also handles metadata Alexa's search chokes on. On a real Echo,
+`Songs from "Friday Afternoons", Op. 7: Cuckoo! by Choir of Downside School, Purley, Benjamin Britten & Viola Tunnard`
+played *nothing*, while every short phrasing found the exact recording. So:
+
+- Quotes, `!`, `?` and catalogue numbers (`Op. 7`, `BWV 1007`, `K. 525`, ...) are dropped.
+- "Work: Movement" titles become "Cuckoo from Friday Afternoons by …", then "Cuckoo by …", then the movement
+  with another credited artist (often the composer): "Cuckoo by Benjamin Britten".
+- Credit lists over 40 characters are shortened to the first performer. Short ones like "Earth, Wind & Fire"
+  stay whole.
 
 ## Sign out
 

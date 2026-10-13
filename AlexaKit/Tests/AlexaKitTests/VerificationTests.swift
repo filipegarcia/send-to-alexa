@@ -125,6 +125,24 @@ struct VerificationTests {
         #expect(transport.requests.filter { $0.url!.path == "/api/behaviors/preview" }.count == 3)
     }
 
+    @Test func triesNextPhrasingWhenNothingStarts() async throws {
+        // Attempt 1: Alexa finds nothing (the Echo keeps reporting the old paused item). Attempt 2: right song.
+        let old = Self.player("Wish You Were Here", "Pink Floyd", queue: "q0", state: "PAUSED")
+        let (_, app) = Self.fakeEcho(playing: [old, old, Self.player("Better Together", "Jack Johnson", queue: "q2")])
+        let result = try await app.playVerified(Self.betterTogether, on: .kitchen, timing: Self.fast)
+        #expect(result.verdict == .matched)
+        #expect(result.attempts == 2)
+    }
+
+    @Test func reportsNotStartedWhenNoPhrasingWorks() async throws {
+        let old = Self.player("Wish You Were Here", "Pink Floyd", queue: "q0", state: "PAUSED")
+        let (transport, app) = Self.fakeEcho(playing: [old])
+        let result = try await app.playVerified(Self.betterTogether, on: .kitchen, timing: Self.fast)
+        #expect(result.verdict == .notStarted)
+        #expect(result.attempts == 3)
+        #expect(transport.requests.filter { $0.url!.path == "/api/behaviors/preview" }.count == 3)
+    }
+
     @Test func noRetryWhenDisabled() async throws {
         let (_, app) = Self.fakeEcho(playing: [
             Self.player("Old", "x", queue: "q0"),
@@ -146,10 +164,10 @@ struct VerificationTests {
         #expect(result.nowPlaying?.summary == "Something — Else")
     }
 
-    @Test func unverifiedWhenTheEchoNeverStarts() async throws {
+    @Test func editedSearchThatFindsNothingIsReportedOnce() async throws {
         let (_, app) = Self.fakeEcho(playing: [Self.player("Old", "x", queue: "q0", state: "IDLE")])
-        let result = try await app.playVerified(Self.betterTogether, on: .kitchen, timing: Self.fast)
-        #expect(result.verdict == .unverified)
+        let result = try await app.playVerified(Self.betterTogether, phrase: "nonsense words", on: .kitchen, timing: Self.fast)
+        #expect(result.verdict == .notStarted)
         #expect(result.nowPlaying == nil)
         #expect(result.attempts == 1)
     }

@@ -101,8 +101,10 @@ Credentials are stored in `~/.config/send-to-alexa/` (mode `0600`). Set `SEND_TO
 
 5. **Check** — the Echo reports what it's playing (`GET /api/np/player`). If it isn't the shared song
    (title must match exactly — a "(Live)" or "(Remix)" counts as different — and the artist or album must match),
-   it retries with more specific wording: *"the song X by Y"*, then *"X by Y from the album Z"*. If Alexa still
-   picks something else, the share sheet stays open, shows what's playing, and lets you edit the search.
+   or if nothing started, it retries with other wording: *"the song X by Y"*, *"X by Y from the album Z"*. For
+   classical titles it searches the movement and performer, e.g. *"Cuckoo from Friday Afternoons by Choir of
+   Downside School"*. If Alexa still misses, the share sheet stays open, shows what's playing, and lets you edit
+   the search.
 
 More detail, request by request: [docs/how-it-works.md](docs/how-it-works.md).
 

@@ -96,15 +96,24 @@ struct ShareView: View {
                 Section {
                     Label {
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("\(device) is playing “\(playing)”")
-                            Text("That's not “\(model.expectedSummary)”. Alexa searches Apple Music by name, so add details (album, year, “original”) and try again.")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
+                            if let playing {
+                                Text("\(device) is playing “\(playing)”")
+                                Text("That's not “\(model.expectedSummary)”. Alexa searches Apple Music by name, so add details (album, year, “original”) and try again.")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            } else {
+                                Text("Alexa didn't start anything on \(device)")
+                                Text("It probably couldn't find a match. Try a shorter search — e.g. just the song name and one artist.")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
                         }
                     } icon: {
                         Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
                     }
-                    Button("Keep what's playing", action: onClose)
+                    if playing != nil {
+                        Button("Keep what's playing", action: onClose)
+                    }
                 }
             }
 

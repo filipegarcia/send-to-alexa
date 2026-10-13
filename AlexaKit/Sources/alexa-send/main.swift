@@ -205,6 +205,8 @@ func run() async throws {
         print("Title:  \(music.title)")
         if let artist = music.artist { print("Artist: \(artist)") }
         print("Phrase: \(music.searchPhrase)")
+        let alternatives = music.searchCandidates.dropFirst()
+        if !alternatives.isEmpty { print("Retries: \(alternatives.map { "“\($0)”" }.joined(separator: ", "))") }
 
     case "play":
         let input = args.positionals.joined(separator: " ")
@@ -246,6 +248,9 @@ func run() async throws {
             print("⚠️  \(device.accountName) is playing \(playing), not \(expected) (tried \(result.attempts) phrasing\(result.attempts == 1 ? "" : "s")).")
             print("   Try a more specific search, e.g.: alexa-send play --device \"\(device.accountName)\" \"\(music.searchPhrase) <album or year>\"")
             exit(2)
+        case .notStarted:
+            print("⚠️  Nothing started on \(device.accountName) — Alexa found no match for: \(music.searchCandidates.prefix(3).map { "“\($0)”" }.joined(separator: ", ")).")
+            exit(3)
         }
 
     case "now-playing":

@@ -58,8 +58,10 @@ public struct PlaybackResult: Equatable, Sendable {
         case matched
         /// The Echo is playing something else, even after retries.
         case mismatched
-        /// We couldn't tell (playlist/station, edited search, or the Echo didn't report in time).
+        /// We couldn't tell (playlist/station or edited search).
         case unverified
+        /// Nothing started playing — Alexa most likely found no match for any phrasing.
+        case notStarted
     }
 
     public var verdict: Verdict
@@ -77,7 +79,7 @@ public struct VerificationTiming: Sendable {
     /// How long to wait for the Echo to report the new item, per attempt.
     public var timeout: Duration
 
-    public init(pollInterval: Duration = .milliseconds(800), timeout: Duration = .seconds(8)) {
+    public init(pollInterval: Duration = .milliseconds(700), timeout: Duration = .seconds(7)) {
         self.pollInterval = pollInterval
         self.timeout = timeout
     }
@@ -86,28 +88,19 @@ public struct VerificationTiming: Sendable {
 }
 
 extension ResolvedMusic {
-    /// Search phrases to try in order, most natural first. Only songs and albums get alternatives.
+    /// Search phrases to try in order: the current `searchPhrase` first, then alternatives
+    /// from `SearchPhrasing` (songs and albums only).
     public var searchCandidates: [String] {
-        let title = MusicResolver.cleanTitle(self.title)
         var phrases = [searchPhrase]
         switch kind {
         case .song, .musicVideo:
-            if let artist {
-                phrases.append("the song \(title) by \(artist)")
-                if let album, !album.isEmpty {
-                    let cleanAlbum = MusicResolver.cleanTitle(album)
-                    if Self.normalize(cleanAlbum) != Self.normalize(title) {
-                        phrases.append("\(title) by \(artist) from the album \(cleanAlbum)")
-                    }
-                }
-            }
+            phrases += SearchPhrasing.songCandidates(title: title, artist: artist, album: album)
         case .album:
-            if let artist { phrases.append("\(title) by \(artist)") }
+            phrases += SearchPhrasing.albumCandidates(title: title, artist: artist)
         default:
             break
         }
-        var seen = Set<String>()
-        return phrases.filter { seen.insert(Self.normalize($0)).inserted }
+        return SearchPhrasing.unique(phrases)
     }
 
     /// Does `playing` look like this item? `nil` means "can't tell" (no retry in that case).
@@ -226,9 +219,10 @@ extension SendToAlexa {
 
             progress?("Checking what’s playing…")
             guard let playing = await client.waitForNewPlayback(on: device, previous: previous, timing: timing) else {
-                result.verdict = .unverified
+                // Nothing new started: Alexa probably found nothing for this wording. Try the next one.
+                result.verdict = .notStarted
                 result.nowPlaying = nil
-                break
+                continue
             }
             result.nowPlaying = playing
             previous = playing

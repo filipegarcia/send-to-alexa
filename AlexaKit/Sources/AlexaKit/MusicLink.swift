@@ -96,13 +96,13 @@ public struct ResolvedMusic: Equatable, Sendable, Codable {
     }
 
     /// Builds a natural search phrase the way you'd say it to Alexa.
-    public static func phrase(kind: MusicItemKind, title: String, artist: String?) -> String {
+    public static func phrase(kind: MusicItemKind, title: String, artist: String?, album: String? = nil) -> String {
         let cleanTitle = MusicResolver.cleanTitle(title)
         switch kind {
         case .song, .musicVideo:
-            return artist.map { "\(cleanTitle) by \($0)" } ?? cleanTitle
+            return SearchPhrasing.songCandidates(title: title, artist: artist, album: album).first ?? cleanTitle
         case .album:
-            return artist.map { "the album \(cleanTitle) by \($0)" } ?? "the album \(cleanTitle)"
+            return SearchPhrasing.albumCandidates(title: title, artist: artist).first ?? "the album \(cleanTitle)"
         case .artist:
             return cleanTitle
         case .playlist:
@@ -110,7 +110,8 @@ public struct ResolvedMusic: Equatable, Sendable, Codable {
         case .station:
             return cleanTitle
         case .unknown:
-            return artist.map { "\(cleanTitle) by \($0)" } ?? cleanTitle
+            guard artist != nil else { return cleanTitle }
+            return SearchPhrasing.songCandidates(title: title, artist: artist, album: album).first ?? cleanTitle
         }
     }
 }
@@ -209,7 +210,10 @@ public struct MusicResolver: Sendable {
                 album: kind == .song || kind == .musicVideo ? collectionName : nil,
                 kind: kind,
                 artworkURL: artwork,
-                searchPhrase: ResolvedMusic.phrase(kind: kind, title: title, artist: artist)
+                searchPhrase: ResolvedMusic.phrase(
+                    kind: kind, title: title, artist: artist,
+                    album: kind == .song || kind == .musicVideo ? collectionName : nil
+                )
             )
         }
     }
