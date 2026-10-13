@@ -75,9 +75,9 @@ No paid developer account is needed: with no Team it's signed to run locally, an
 cd AlexaKit
 swift run alexa-send login --region amazon.de        # your Alexa country; opens Amazon sign-in in the browser
 swift run alexa-send devices                         # * marks the default device
-swift run alexa-send play --device Kitchen "https://music.apple.com/de/album/better-together/1440857781?i=1440857786"
-swift run alexa-send play "Today's Hits playlist"    # any search works too
-swift run alexa-send play --check --device Kitchen "Bohemian Rhapsody by Queen"   # ask Alexa to validate only — silent
+swift run alexa-send play --device Kitchen "https://music.apple.com/de/album/wish-you-were-here/1065973975?i=1065973980"
+swift run alexa-send play "Pink Floyd Essentials playlist"   # any search works too
+swift run alexa-send play --check --device Kitchen "Comfortably Numb by Pink Floyd"   # ask Alexa to validate only — silent
 swift run alexa-send now-playing --device Kitchen    # what is the Echo playing?
 swift run alexa-send control pause --device Kitchen  # play | pause | next | previous | volume 40
 swift run alexa-send --help
@@ -97,18 +97,17 @@ Credentials are stored in `~/.config/send-to-alexa/` (mode `0600`). Set `SEND_TO
    (cached for 12 h, renewed automatically).
 3. **Link → phrase** — Apple Music links are turned into a natural phrase using Apple's public
    [iTunes Lookup API](https://performance-partners.apple.com/search-api) (songs, albums, artists) or the public
-   page title (playlists, stations): *"Better Together by Jack Johnson"*, *"the album Rumours by Fleetwood Mac"*,
-   *"the Today's Hits playlist"*.
+   page title (playlists, stations): *"Wish You Were Here by Pink Floyd"*, *"the album The Wall by Pink Floyd"*,
+   *"the Pink Floyd Essentials playlist"*.
 4. **Play** — `POST /api/behaviors/operation/validate` then `POST /api/behaviors/preview` with an
    `Alexa.Music.PlaySearchPhrase` node for the chosen device and `APPLE_MUSIC` provider — exactly what an
    Alexa routine's *Music* action does.
-
 5. **Check** — the Echo reports what it's playing (`GET /api/np/player`). If it isn't the shared song
    (title must match exactly — a "(Live)" or "(Remix)" counts as different — and the artist or album must match),
-   or if nothing started, it retries with other wording: *"the song X by Y"*, *"X by Y from the album Z"*. For
-   classical titles it searches the movement and performer, e.g. *"Cuckoo from Friday Afternoons by Choir of
-   Downside School"*. If Alexa still misses, the share sheet stays open, shows what's playing, and lets you edit
-   the search.
+   or if nothing started, it retries with other wording: *"the song Comfortably Numb by Pink Floyd"*, then
+   *"Comfortably Numb by Pink Floyd from the album The Wall"*. For classical titles it searches the movement and
+   performer, e.g. *"Cuckoo from Friday Afternoons by Choir of Downside School"*. If Alexa still misses, the
+   share sheet stays open, shows what's playing, and lets you edit the search.
 
 More detail, request by request: [docs/how-it-works.md](docs/how-it-works.md).
 
@@ -174,7 +173,7 @@ import AlexaKit
 
 let app = SendToAlexa(store: AlexaStore(KeychainStore()))
 let devices = try await app.refreshDevices()
-let music = try await app.resolver.resolve(url: URL(string: "https://music.apple.com/us/album/x/1440857781?i=1440857786"), text: nil)
+let music = try await app.resolver.resolve(url: URL(string: "https://music.apple.com/de/album/wish-you-were-here/1065973975?i=1065973980"), text: nil)
 try await app.play(music.searchPhrase, on: devices[0], provider: .appleMusic)
 ```
 
