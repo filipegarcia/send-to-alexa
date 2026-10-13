@@ -122,6 +122,12 @@ public actor AlexaClient {
         ])
     }
 
+    /// Low-level escape hatch for exploring the Alexa web API (used by `alexa-send api`).
+    public func rawRequest(_ method: String, _ path: String, jsonBody: Data? = nil) async throws -> Data {
+        let body = try jsonBody.map { try JSONSerialization.jsonObject(with: $0) }
+        return try await request(method, path, json: body)
+    }
+
     /// Raw list of music providers Alexa knows about for this account (debugging aid).
     public func musicProvidersJSON() async throws -> Data {
         try await request("GET", "/api/behaviors/entities?skillId=amzn1.ask.1p.music", extraHeaders: ["Routines-Version": "3.0.264101"])

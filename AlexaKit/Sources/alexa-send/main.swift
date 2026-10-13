@@ -14,9 +14,11 @@ USAGE
   alexa-send default <device name or serial>
   alexa-send provider <APPLE_MUSIC|AMAZON_MUSIC|SPOTIFY|DEEZER|TUNEIN|I_HEART_RADIO>
   alexa-send resolve <apple music url | text>
-  alexa-send play [--device <name>] [--provider <id>] [--dry-run | --check] <apple music url | search phrase...>
+  alexa-send play [--device <name>] [--provider <id>] [--dry-run | --check] [--no-verify] [--no-retry] <url | phrase...>
+  alexa-send now-playing [--device <name>]
   alexa-send speak [--device <name>] <text...>
   alexa-send providers
+  alexa-send api <GET|POST|PUT> <path> [json-body]     (raw Alexa web API call, for exploring)
   alexa-send logout
 
 EXAMPLES
@@ -105,7 +107,7 @@ func run() async throws {
         return
     }
     arguments.removeFirst()
-    let args = Args(arguments, switches: ["all", "json", "dry-run", "check", "help", "no-open"])
+    let args = Args(arguments, switches: ["all", "json", "dry-run", "check", "help", "no-open", "no-verify", "no-retry"])
     if args.switches.contains("help") || command == "help" || command == "--help" || command == "-h" {
         print(usage)
         return
@@ -225,8 +227,34 @@ func run() async throws {
             print("✓ Alexa accepts \"\(music.searchPhrase)\" for \(device.accountName) (searches: \"\(sanitized)\"). Nothing was played.")
             return
         }
-        let sanitized = try await app.play(music.searchPhrase, on: device, provider: provider)
-        print("▶︎ \(device.accountName): \(music.searchPhrase)\(sanitized != music.searchPhrase ? "  (Alexa: \"\(sanitized)\")" : "")")
+        if args.switches.contains("no-verify") {
+            let sanitized = try await app.play(music.searchPhrase, on: device, provider: provider)
+            print("▶︎ \(device.accountName): \(music.searchPhrase)\(sanitized != music.searchPhrase ? "  (Alexa: \"\(sanitized)\")" : "")")
+            return
+        }
+        let result = try await app.playVerified(
+            music, on: device, provider: provider, retry: args.switches.contains("no-retry") ? false : nil
+        ) { message in print("  … \(message)") }
+        let playing = result.nowPlaying?.summary ?? music.searchPhrase
+        switch result.verdict {
+        case .matched:
+            print("✅ \(device.accountName) is playing \(playing)\(result.attempts > 1 ? "  (needed \(result.attempts) tries)" : "")")
+        case .unverified:
+            print("▶︎ \(device.accountName): \(playing)  (couldn't verify it's the exact item)")
+        case .mismatched:
+            let expected = [music.title, music.artist].compactMap { $0 }.joined(separator: " — ")
+            print("⚠️  \(device.accountName) is playing \(playing), not \(expected) (tried \(result.attempts) phrasing\(result.attempts == 1 ? "" : "s")).")
+            print("   Try a more specific search, e.g.: alexa-send play --device \"\(device.accountName)\" \"\(music.searchPhrase) <album or year>\"")
+            exit(2)
+        }
+
+    case "now-playing":
+        let device = try await resolveDevice(args.options["device"])
+        if let playing = try await app.client().nowPlaying(on: device) {
+            print("\(device.accountName): \(playing.state ?? "?") — \(playing.summary)\(playing.provider.map { " [\($0)]" } ?? "")")
+        } else {
+            print("\(device.accountName): nothing playing")
+        }
 
     case "speak":
         let text = args.positionals.joined(separator: " ")
@@ -238,6 +266,26 @@ func run() async throws {
     case "providers":
         let data = try await app.client().musicProvidersJSON()
         print(String(decoding: data, as: UTF8.self))
+
+    case "api":
+        guard args.positionals.count >= 2 else { throw CLIError("Usage: alexa-send api <METHOD> <path> [json-body]") }
+        let method = args.positionals[0].uppercased()
+        var path = args.positionals[1]
+        if let device = args.options["device"] {
+            // Convenience: --device fills in {serial} and {type} placeholders.
+            let d = try await resolveDevice(device)
+            path = path.replacingOccurrences(of: "{serial}", with: d.serialNumber)
+                .replacingOccurrences(of: "{type}", with: d.deviceType)
+                .replacingOccurrences(of: "{customer}", with: d.deviceOwnerCustomerId)
+        }
+        let body = args.positionals.count > 2 ? Data(args.positionals[2].utf8) : nil
+        let data = try await app.client().rawRequest(method, path, jsonBody: body)
+        if let object = try? JSONSerialization.jsonObject(with: data),
+           let pretty = try? JSONSerialization.data(withJSONObject: object, options: [.prettyPrinted, .sortedKeys]) {
+            print(String(decoding: pretty, as: UTF8.self))
+        } else {
+            print(String(decoding: data, as: UTF8.self))
+        }
 
     case "logout":
         await app.signOut()

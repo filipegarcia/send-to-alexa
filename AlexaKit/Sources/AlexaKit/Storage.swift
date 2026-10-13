@@ -13,17 +13,21 @@ public struct Preferences: Codable, Equatable, Sendable {
     public var cachedDevices: [EchoDevice]
     /// When true, the share sheet plays on the default device immediately instead of waiting for a tap.
     public var playImmediately: Bool
+    /// When true, if the Echo starts a different song than the one shared, retry with more specific wording.
+    public var retryOnMismatch: Bool
 
     public init(
         defaultDeviceSerial: String? = nil,
         provider: MusicProvider = .appleMusic,
         cachedDevices: [EchoDevice] = [],
-        playImmediately: Bool = false
+        playImmediately: Bool = false,
+        retryOnMismatch: Bool = true
     ) {
         self.defaultDeviceSerial = defaultDeviceSerial
         self.provider = provider
         self.cachedDevices = cachedDevices
         self.playImmediately = playImmediately
+        self.retryOnMismatch = retryOnMismatch
     }
 
     public init(from decoder: Decoder) throws {
@@ -33,6 +37,7 @@ public struct Preferences: Codable, Equatable, Sendable {
         provider = (try? c.decodeIfPresent(MusicProvider.self, forKey: .provider)) ?? .appleMusic
         cachedDevices = (try? c.decodeIfPresent([EchoDevice].self, forKey: .cachedDevices)) ?? []
         playImmediately = (try? c.decodeIfPresent(Bool.self, forKey: .playImmediately)) ?? false
+        retryOnMismatch = (try? c.decodeIfPresent(Bool.self, forKey: .retryOnMismatch)) ?? true
     }
 
     public var defaultDevice: EchoDevice? {

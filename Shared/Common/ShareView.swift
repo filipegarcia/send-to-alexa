@@ -39,12 +39,12 @@ struct ShareView: View {
             } description: {
                 Text("Open the Send to Alexa app once and sign in with your Amazon account.")
             }
-        case .sent(let device):
+        case .sent(let device, let playing, let verified):
             ContentUnavailableView {
-                Label("Playing on \(device)", systemImage: "checkmark.circle.fill")
-                    .foregroundStyle(.green)
+                Label("Playing on \(device)", systemImage: verified ? "checkmark.circle.fill" : "play.circle.fill")
+                    .foregroundStyle(verified ? .green : .accentColor)
             } description: {
-                Text(model.phrase)
+                Text(playing ?? model.phrase)
             }
         default:
             form
@@ -92,6 +92,22 @@ struct ShareView: View {
                 }
             }
 
+            if case .mismatched(let device, let playing) = model.phase {
+                Section {
+                    Label {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("\(device) is playing “\(playing)”")
+                            Text("That's not “\(model.expectedSummary)”. Alexa searches Apple Music by name, so add details (album, year, “original”) and try again.")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    } icon: {
+                        Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
+                    }
+                    Button("Keep what's playing", action: onClose)
+                }
+            }
+
             if case .failed(let message) = model.phase {
                 Section {
                     Label(message, systemImage: "exclamationmark.triangle.fill")
@@ -110,11 +126,12 @@ struct ShareView: View {
                 HStack {
                     if model.phase == .sending {
                         ProgressView().tint(.white)
+                        Text(model.progressMessage ?? "Sending…").lineLimit(1)
                     } else {
-                        Image(systemName: "play.fill")
+                        Image(systemName: model.isMismatch ? "arrow.clockwise" : "play.fill")
+                        Text(model.selectedDevice.map { "\(model.isMismatch ? "Try again on" : "Play on") \($0.accountName)" } ?? "Choose an Echo")
+                            .lineLimit(1)
                     }
-                    Text(model.selectedDevice.map { "Play on \($0.accountName)" } ?? "Choose an Echo")
-                        .lineLimit(1)
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 6)

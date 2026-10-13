@@ -88,6 +88,11 @@ final class AppModel {
         set { update { $0.playImmediately = newValue } }
     }
 
+    var retryOnMismatch: Bool {
+        get { preferences.retryOnMismatch }
+        set { update { $0.retryOnMismatch = newValue } }
+    }
+
     private func update(_ change: (inout Preferences) -> Void) {
         do {
             try service.store.updatePreferences(change)

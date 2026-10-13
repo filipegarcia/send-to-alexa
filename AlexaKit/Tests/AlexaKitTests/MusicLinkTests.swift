@@ -94,6 +94,7 @@ struct MusicLinkTests {
         #expect(music == ResolvedMusic(
             title: "Better Together",
             artist: "Jack Johnson",
+            album: "In Between Dreams",
             kind: .song,
             artworkURL: URL(string: "https://example.com/a/600x600bb.jpg"),
             searchPhrase: "Better Together by Jack Johnson"

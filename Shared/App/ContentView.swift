@@ -119,11 +119,16 @@ struct ContentView: View {
                 Text("Preselected in the share sheet. You can still pick another Echo each time.")
             }
 
-            Section("When sharing") {
+            Section {
                 Picker("Music service", selection: $model.provider) {
                     ForEach(MusicProvider.allCases) { Text($0.displayName).tag($0) }
                 }
                 Toggle("Play immediately on the default Echo", isOn: $model.playImmediately)
+                Toggle("Retry if Alexa picks a different song", isOn: $model.retryOnMismatch)
+            } header: {
+                Text("When sharing")
+            } footer: {
+                Text("Alexa can only search Apple Music by name. After playing, Send to Alexa checks what the Echo picked and, if it's a different song or version, tries a more specific search (up to 3 times).")
             }
 
             Section {

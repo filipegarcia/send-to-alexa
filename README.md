@@ -75,6 +75,7 @@ swift run alexa-send devices                         # * marks the default devic
 swift run alexa-send play --device Kitchen "https://music.apple.com/de/album/better-together/1440857781?i=1440857786"
 swift run alexa-send play "Today's Hits playlist"    # any search works too
 swift run alexa-send play --check --device Kitchen "Bohemian Rhapsody by Queen"   # ask Alexa to validate only — silent
+swift run alexa-send now-playing --device Kitchen    # what is the Echo playing?
 swift run alexa-send --help
 ```
 
@@ -98,7 +99,19 @@ Credentials are stored in `~/.config/send-to-alexa/` (mode `0600`). Set `SEND_TO
    `Alexa.Music.PlaySearchPhrase` node for the chosen device and `APPLE_MUSIC` provider — exactly what an
    Alexa routine's *Music* action does.
 
+5. **Check** — the Echo reports what it's playing (`GET /api/np/player`). If it isn't the shared song
+   (title must match exactly — a "(Live)" or "(Remix)" counts as different — and the artist or album must match),
+   it retries with more specific wording: *"the song X by Y"*, then *"X by Y from the album Z"*. If Alexa still
+   picks something else, the share sheet stays open, shows what's playing, and lets you edit the search.
+
 More detail, request by request: [docs/how-it-works.md](docs/how-it-works.md).
+
+### Why not play the exact track ID?
+
+Because Alexa doesn't allow it. Apple Music on Echo is a third-party *music skill*: Alexa turns your request into
+a search ("song X by artist Y") and Apple's skill picks the match. There is no API — official or unofficial —
+that hands a catalog ID to the Apple Music skill (the Echo's own queue doesn't even expose Apple's IDs).
+So Send to Alexa does the next best thing: search as precisely as possible, check, and retry.
 
 ### Where your data lives
 
@@ -165,7 +178,7 @@ try await app.play(music.searchPhrase, on: devices[0], provider: .appleMusic)
 | --- | --- |
 | "Send to Alexa" missing from the share sheet | Run the app once first. iPhone: scroll the app row to the end › **More** › enable it. Mac: enable it in System Settings (see Quick start). |
 | Share sheet says "Not signed in" | Open the app and sign in. App and extension must be signed with the same Team (they share a Keychain group). |
-| Plays the wrong version | Edit the phrase in the share sheet (e.g. add "live" or the album name). |
+| Plays the wrong song/version | It retries automatically; if it still misses, edit the phrase in the share sheet (add the album name, "original", "live", the year…). `alexa-send now-playing` shows what the Echo picked. |
 | "Provider not linked" / nothing plays | Link Apple Music in the Alexa app and check the music service picker in Send to Alexa. |
 | "Your Amazon session expired" | Sign out and sign in again (the virtual device was removed or Amazon revoked the token). |
 | Sign-in page keeps failing | Try another *Alexa country*, or with the CLI `--sign-in-domain amazon.<your tld>`. |

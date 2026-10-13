@@ -10,12 +10,17 @@ final class ShareModel {
         case resolving
         case ready
         case sending
-        case sent(device: String)
+        /// `playing` is what the Echo reports; `verified` means it matched the shared song.
+        case sent(device: String, playing: String?, verified: Bool)
+        /// The Echo started something else, even after retries. The sheet stays open so the search can be edited.
+        case mismatched(device: String, playing: String)
         case failed(String)
         case notSignedIn
     }
 
     private(set) var phase: Phase = .resolving
+    /// Short status while sending ("Checking what’s playing…").
+    private(set) var progressMessage: String?
     private(set) var music: ResolvedMusic?
     var phrase: String = ""
     private(set) var devices: [EchoDevice] = []
@@ -44,6 +49,11 @@ final class ShareModel {
             && !phrase.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             && phase != .sending
             && phase != .resolving
+    }
+
+    var isMismatch: Bool {
+        if case .mismatched = phase { return true }
+        return false
     }
 
     func start() async {
@@ -92,9 +102,23 @@ final class ShareModel {
     func send() async {
         guard let device = selectedDevice else { return }
         phase = .sending
+        progressMessage = "Asking Alexa to play it…"
+        defer { progressMessage = nil }
+        // Plain-text shares have no metadata; we still play + report what the Echo picked.
+        let item = music ?? ResolvedMusic(title: phrase, kind: .unknown, searchPhrase: phrase)
         do {
-            try await service.play(phrase, on: device, provider: provider)
-            phase = .sent(device: device.accountName)
+            let result = try await service.playVerified(item, phrase: phrase, on: device, provider: provider) { [weak self] message in
+                Task { @MainActor in self?.progressMessage = message }
+            }
+            switch result.verdict {
+            case .matched:
+                phase = .sent(device: device.accountName, playing: result.nowPlaying?.summary, verified: true)
+            case .unverified:
+                phase = .sent(device: device.accountName, playing: result.nowPlaying?.summary, verified: false)
+            case .mismatched:
+                phrase = result.phrase
+                phase = .mismatched(device: device.accountName, playing: result.nowPlaying?.summary ?? "something else")
+            }
         } catch {
             phase = .failed(error.localizedDescription)
         }
@@ -103,5 +127,11 @@ final class ShareModel {
     /// Lets the user retry after an error without losing their edits.
     func dismissError() {
         if case .failed = phase { phase = .ready }
+    }
+
+    /// The shared song as "Title — Artist", for messages.
+    var expectedSummary: String {
+        guard let music else { return phrase }
+        return [music.title, music.artist].compactMap { $0 }.joined(separator: " — ")
     }
 }

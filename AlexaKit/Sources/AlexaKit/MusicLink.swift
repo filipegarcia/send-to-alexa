@@ -72,14 +72,24 @@ public struct MusicLink: Equatable, Sendable {
 public struct ResolvedMusic: Equatable, Sendable, Codable {
     public var title: String
     public var artist: String?
+    /// Album the song is on (songs only), used to pick the right version and to verify playback.
+    public var album: String?
     public var kind: MusicItemKind
     public var artworkURL: URL?
     /// The phrase sent to Alexa, e.g. "Better Together by Jack Johnson". Editable by the user.
     public var searchPhrase: String
 
-    public init(title: String, artist: String? = nil, kind: MusicItemKind, artworkURL: URL? = nil, searchPhrase: String) {
+    public init(
+        title: String,
+        artist: String? = nil,
+        album: String? = nil,
+        kind: MusicItemKind,
+        artworkURL: URL? = nil,
+        searchPhrase: String
+    ) {
         self.title = title
         self.artist = artist
+        self.album = album
         self.kind = kind
         self.artworkURL = artworkURL
         self.searchPhrase = searchPhrase
@@ -196,6 +206,7 @@ public struct MusicResolver: Sendable {
             return ResolvedMusic(
                 title: title,
                 artist: artist,
+                album: kind == .song || kind == .musicVideo ? collectionName : nil,
                 kind: kind,
                 artworkURL: artwork,
                 searchPhrase: ResolvedMusic.phrase(kind: kind, title: title, artist: artist)

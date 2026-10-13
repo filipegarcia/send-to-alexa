@@ -114,6 +114,22 @@ POST https://alexa.<marketplace>/api/behaviors/preview
 
 `speak` works the same way with an `Alexa.Speak` node (`textToSpeak`).
 
+### 4c. Check what started (and retry)
+
+There's no way to pass an Apple Music catalog id: Apple Music is a third-party music skill and only receives
+Alexa's parsed search. So `SendToAlexa.playVerified` polls
+
+```
+GET https://alexa.<marketplace>/api/np/player?deviceSerialNumber=…&deviceType=…
+→ { "playerInfo": { "state": "PLAYING", "queueId": "…", "infoText": { "title": "Better Together", "subText1": "Jack Johnson" } } }
+```
+
+until the `queueId`/title changes and `state == PLAYING` (8 s timeout). `subText1` is usually the artist but sometimes
+the album. A song matches when the normalised title is **equal** (so "(Live)"/"(Remix)" don't match; "(feat. …)" and
+"Remastered" are ignored) and `subText1` overlaps the artist credits or equals the album. On a mismatch it tries
+`ResolvedMusic.searchCandidates` in order (max 3): "X by Y", "the song X by Y", "X by Y from the album Z".
+If the user edited the phrase, it's played once and the result is only reported.
+
 ## 5. Apple Music link → search phrase
 
 `MusicLink.parse` understands `music.apple.com/{storefront}/{album|song|artist|playlist|station|music-video}/{slug}/{id}`.

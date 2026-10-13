@@ -189,6 +189,7 @@ final class Counter: @unchecked Sendable {
     private var value = 0
     private let lock = NSLock()
     func next() -> Int { lock.withLock { defer { value += 1 }; return value } }
+    func peek() -> Int { lock.withLock { value } }
 }
 
 final class Box: @unchecked Sendable {
