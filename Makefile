@@ -6,7 +6,7 @@ DERIVED := build/DerivedData
 APP_NAME := Send to Alexa
 MAC_APP := $(DERIVED)/Build/Products/Debug/$(APP_NAME).app
 
-.PHONY: help setup project test cli build-ios build-macos build run-mac icon clean
+.PHONY: help setup project test cli build-ios build-macos build run-mac run-ios icon clean
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2}'
@@ -47,6 +47,14 @@ run-mac: ## Build the Mac app, install it in ~/Applications, enable its Share ex
 		pluginkit -e use -i "$$(/usr/libexec/PlistBuddy -c 'Print CFBundleIdentifier' "$$APPEX/Contents/Info.plist")"
 	@echo "Installed ~/Applications/$(APP_NAME).app — Share › Send to Alexa is now available in Music.app"
 	open "$(HOME)/Applications/$(APP_NAME).app"
+
+run-ios: ## Build, install and launch on a connected iPhone (unlocked; DEVICE=<udid> if you have several)
+	@UDID="$(DEVICE)"; [ -n "$$UDID" ] || UDID=$$(xcrun devicectl list devices 2>/dev/null | awk '/available \(paired\)/ {for (i=1;i<=NF;i++) if ($$i ~ /^[0-9A-F]{8}-[0-9A-F]{16}$$/) print $$i}' | head -1); \
+	test -n "$$UDID" || (echo "No paired iPhone found (connect it, unlock it, trust this Mac)"; exit 1); \
+	xcodebuild -project $(PROJECT) -scheme SendToAlexa-iOS -configuration Debug -destination "id=$$UDID" \
+		-derivedDataPath $(DERIVED) -allowProvisioningUpdates -quiet build && \
+	xcrun devicectl device install app --device "$$UDID" "$(DERIVED)/Build/Products/Debug-iphoneos/SendToAlexa.app" && \
+	xcrun devicectl device process launch --device "$$UDID" "$$(/usr/libexec/PlistBuddy -c 'Print CFBundleIdentifier' "$(DERIVED)/Build/Products/Debug-iphoneos/SendToAlexa.app/Info.plist")"
 
 icon: ## Re-render the iOS/macOS app icons and the menu bar glyph from scripts/make-icon.swift
 	@mkdir -p build
