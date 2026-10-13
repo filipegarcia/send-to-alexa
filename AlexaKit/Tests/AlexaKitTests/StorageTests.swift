@@ -50,4 +50,25 @@ struct StorageTests {
         try store.write(nil, for: "credentials")
         #expect(try store.read("credentials") == nil)
     }
+
+    @Test func hidingDevicesKeepsTheDefaultValid() throws {
+        let store = AlexaStore(MemoryStore())
+        try store.saveCredentials(.fixture())
+        let other = EchoDevice(accountName: "Bedroom", serialNumber: "S2", deviceType: "T", deviceFamily: "ECHO", deviceOwnerCustomerId: "C")
+        try store.updatePreferences {
+            $0.cachedDevices = [.kitchen, other]
+            $0.defaultDeviceSerial = EchoDevice.kitchen.serialNumber
+        }
+        let app = SendToAlexa(store: store)
+        try app.setHidden(true, device: EchoDevice.kitchen.serialNumber)
+        var prefs = store.loadPreferences()
+        #expect(prefs.visibleDevices.map(\.accountName) == ["Bedroom"])
+        #expect(prefs.hiddenDevices == [.kitchen])
+        #expect(prefs.defaultDeviceSerial == "S2", "hiding the default moves it to a visible Echo")
+
+        try app.setHidden(false, device: EchoDevice.kitchen.serialNumber)
+        prefs = store.loadPreferences()
+        #expect(prefs.visibleDevices.count == 2)
+        #expect(prefs.defaultDeviceSerial == "S2", "unhiding doesn't steal the default")
+    }
 }

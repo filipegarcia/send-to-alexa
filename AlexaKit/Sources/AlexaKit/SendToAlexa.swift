@@ -61,11 +61,26 @@ public struct SendToAlexa: Sendable {
         let devices = try await client().musicDevices()
         try store.updatePreferences { prefs in
             prefs.cachedDevices = devices
-            if prefs.defaultDeviceSerial == nil || !devices.contains(where: { $0.serialNumber == prefs.defaultDeviceSerial }) {
-                prefs.defaultDeviceSerial = Self.suggestedDefault(in: devices)?.serialNumber
-            }
+            Self.repairDefault(&prefs)
         }
         return devices
+    }
+
+    /// Hides (or shows again) an Echo everywhere it would be offered, keeping the default valid.
+    public func setHidden(_ hidden: Bool, device serial: String) throws {
+        try store.updatePreferences { prefs in
+            prefs.hiddenDeviceSerials.removeAll { $0 == serial }
+            if hidden { prefs.hiddenDeviceSerials.append(serial) }
+            Self.repairDefault(&prefs)
+        }
+    }
+
+    /// Makes sure the default Echo exists and isn't hidden.
+    static func repairDefault(_ prefs: inout Preferences) {
+        let visible = prefs.visibleDevices
+        if prefs.defaultDeviceSerial == nil || !visible.contains(where: { $0.serialNumber == prefs.defaultDeviceSerial }) {
+            prefs.defaultDeviceSerial = suggestedDefault(in: visible)?.serialNumber
+        }
     }
 
     /// A sensible default: an online Echo speaker, then any online single device, then anything.

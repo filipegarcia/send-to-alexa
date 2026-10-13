@@ -17,7 +17,7 @@ struct SendToAlexaMacApp: App {
         Window("Send to Alexa", id: "main") {
             ContentView()
                 .frame(minWidth: 420, idealWidth: 460, minHeight: 520, idealHeight: 640)
-                .onDisappear { menuBar.reloadAccount() }
+                .onDisappear { menuBar.player.reloadAccount() }
         }
         .windowResizability(.contentMinSize)
         .defaultSize(width: 460, height: 640)

@@ -24,7 +24,19 @@ final class AppModel {
     }
 
     var isSignedIn: Bool { credentials != nil }
-    var devices: [EchoDevice] { preferences.cachedDevices }
+    /// Echos offered for sharing (hidden ones excluded).
+    var devices: [EchoDevice] { preferences.visibleDevices }
+    var hiddenDevices: [EchoDevice] { preferences.hiddenDevices }
+
+    /// "Remove destination": hide an Echo everywhere (or show it again).
+    func setHidden(_ hidden: Bool, _ device: EchoDevice) {
+        do {
+            try service.setHidden(hidden, device: device.serialNumber)
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+        reload()
+    }
 
     func reload() {
         credentials = service.store.loadCredentials()

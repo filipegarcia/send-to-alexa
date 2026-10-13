@@ -15,19 +15,23 @@ public struct Preferences: Codable, Equatable, Sendable {
     public var playImmediately: Bool
     /// When true, if the Echo starts a different song than the one shared, retry with more specific wording.
     public var retryOnMismatch: Bool
+    /// Echos the user hid ("remove destination"). They stay in `cachedDevices` but aren't offered anywhere.
+    public var hiddenDeviceSerials: [String]
 
     public init(
         defaultDeviceSerial: String? = nil,
         provider: MusicProvider = .appleMusic,
         cachedDevices: [EchoDevice] = [],
         playImmediately: Bool = false,
-        retryOnMismatch: Bool = true
+        retryOnMismatch: Bool = true,
+        hiddenDeviceSerials: [String] = []
     ) {
         self.defaultDeviceSerial = defaultDeviceSerial
         self.provider = provider
         self.cachedDevices = cachedDevices
         self.playImmediately = playImmediately
         self.retryOnMismatch = retryOnMismatch
+        self.hiddenDeviceSerials = hiddenDeviceSerials
     }
 
     public init(from decoder: Decoder) throws {
@@ -38,10 +42,20 @@ public struct Preferences: Codable, Equatable, Sendable {
         cachedDevices = (try? c.decodeIfPresent([EchoDevice].self, forKey: .cachedDevices)) ?? []
         playImmediately = (try? c.decodeIfPresent(Bool.self, forKey: .playImmediately)) ?? false
         retryOnMismatch = (try? c.decodeIfPresent(Bool.self, forKey: .retryOnMismatch)) ?? true
+        hiddenDeviceSerials = (try? c.decodeIfPresent([String].self, forKey: .hiddenDeviceSerials)) ?? []
     }
 
     public var defaultDevice: EchoDevice? {
-        cachedDevices.first { $0.serialNumber == defaultDeviceSerial }
+        visibleDevices.first { $0.serialNumber == defaultDeviceSerial }
+    }
+
+    /// Devices the user hasn't hidden — what pickers should show.
+    public var visibleDevices: [EchoDevice] {
+        cachedDevices.filter { !hiddenDeviceSerials.contains($0.serialNumber) }
+    }
+
+    public var hiddenDevices: [EchoDevice] {
+        cachedDevices.filter { hiddenDeviceSerials.contains($0.serialNumber) }
     }
 }
 

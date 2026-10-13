@@ -4,7 +4,9 @@ import SwiftUI
 /// Main app UI (iOS and macOS): sign in, pick your default Echo, set preferences, try a link.
 struct ContentView: View {
     @State private var model = AppModel()
+    @State private var player = PlayerModel()
     @State private var showingTrySheet = false
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         NavigationStack {
@@ -37,7 +39,17 @@ struct ContentView: View {
                 model.reload()
             }
         }
-        .task { await model.refreshDevices() }
+        .task {
+            await model.refreshDevices()
+            player.reloadAccount()
+        }
+        // Poll what's playing only while the app is on screen.
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active, model.isSignedIn { player.activate() } else if phase != .active { player.startPolling(every: nil) }
+        }
+        .onChange(of: model.isSignedIn) { _, signedIn in
+            if signedIn { player.activate() }
+        }
     }
 
     // MARK: Signed out
@@ -94,6 +106,23 @@ struct ContentView: View {
     private var signedIn: some View {
         Form {
             Section {
+                NowPlayingPanel(player: player, artworkSize: 84)
+                    .padding(.vertical, 6)
+                if let message = player.message {
+                    Text(message).font(.caption).foregroundStyle(.secondary)
+                }
+            } header: {
+                HStack {
+                    Text("Now playing")
+                    Spacer()
+                    EchoPicker(player: player)
+                        .textCase(nil)
+                }
+            }
+            .onAppear { player.activate() }
+            .onDisappear { player.startPolling(every: nil) }
+
+            Section {
                 if model.devices.isEmpty {
                     Text(model.isBusy ? "Loading devices…" : "No music-capable Echo devices found.")
                         .foregroundStyle(.secondary)
@@ -102,6 +131,15 @@ struct ContentView: View {
                     DeviceRow(device: device, isSelected: device.serialNumber == model.defaultDeviceSerial)
                         .contentShape(Rectangle())
                         .onTapGesture { model.defaultDeviceSerial = device.serialNumber }
+                        .contextMenu {
+                            Button("Hide \(device.accountName)", systemImage: "eye.slash") { hide(device) }
+                        }
+                        #if os(iOS)
+                        .swipeActions {
+                            Button("Hide", systemImage: "eye.slash") { hide(device) }
+                                .tint(.gray)
+                        }
+                        #endif
                 }
             } header: {
                 HStack {
@@ -116,7 +154,26 @@ struct ContentView: View {
                     .disabled(model.isBusy)
                 }
             } footer: {
-                Text("Preselected in the share sheet. You can still pick another Echo each time.")
+                #if os(iOS)
+                Text("Preselected in the share sheet. Swipe left on an Echo to hide it from the share sheet and player.")
+                #else
+                Text("Preselected in the share sheet. Right-click an Echo to hide it from the share sheet and menu bar.")
+                #endif
+            }
+
+            if !model.hiddenDevices.isEmpty {
+                Section("Hidden") {
+                    ForEach(model.hiddenDevices) { device in
+                        HStack {
+                            DeviceRow(device: device, isSelected: false).opacity(0.6)
+                            Button("Show") {
+                                model.setHidden(false, device)
+                                player.reloadAccount()
+                            }
+                            .buttonStyle(.borderless)
+                        }
+                    }
+                }
             }
 
             Section {
@@ -160,6 +217,13 @@ struct ContentView: View {
         #if os(macOS)
         .formStyle(.grouped)
         #endif
+    }
+}
+
+extension ContentView {
+    private func hide(_ device: EchoDevice) {
+        model.setHidden(true, device)
+        player.reloadAccount()
     }
 }
 

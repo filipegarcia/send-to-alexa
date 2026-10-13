@@ -63,7 +63,7 @@ final class ShareModel {
             return
         }
         let prefs = service.store.loadPreferences()
-        devices = prefs.cachedDevices
+        devices = prefs.visibleDevices
         selectedSerial = prefs.defaultDeviceSerial ?? devices.first?.serialNumber
         provider = prefs.provider
 
@@ -89,7 +89,8 @@ final class ShareModel {
         isRefreshingDevices = true
         defer { isRefreshingDevices = false }
         do {
-            devices = try await service.refreshDevices()
+            try await service.refreshDevices()
+            devices = service.store.loadPreferences().visibleDevices
             if selectedDevice == nil {
                 selectedSerial = service.store.loadPreferences().defaultDeviceSerial ?? devices.first?.serialNumber
             }
