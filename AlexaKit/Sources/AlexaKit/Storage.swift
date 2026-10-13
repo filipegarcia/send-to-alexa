@@ -193,7 +193,7 @@ public struct KeychainError: LocalizedError {
 
 // MARK: - Files
 
-/// Stores each blob as `<directory>/<key>.json` with 0600 permissions. Used by the CLI.
+/// Stores each blob as `<directory>/<key>.json` with 0600 permissions. Used by the CLI and the Mac app.
 public struct FileStore: BlobStore {
     public let directory: URL
 
@@ -202,12 +202,20 @@ public struct FileStore: BlobStore {
     }
 
     /// `~/.config/send-to-alexa` (or `$SEND_TO_ALEXA_HOME`).
+    ///
+    /// On macOS this is the *real* home folder even inside the App Sandbox, so the Mac app, its share extension
+    /// and the CLI all share one sign-in (the sandboxed targets get a read/write exception for this folder).
     public static func defaultDirectory() -> URL {
         if let custom = ProcessInfo.processInfo.environment["SEND_TO_ALEXA_HOME"], !custom.isEmpty {
             return URL(fileURLWithPath: custom, isDirectory: true)
         }
         #if os(macOS)
-        let home = FileManager.default.homeDirectoryForCurrentUser
+        let home: URL
+        if let entry = getpwuid(getuid()), let dir = entry.pointee.pw_dir {
+            home = URL(fileURLWithPath: String(cString: dir), isDirectory: true)
+        } else {
+            home = FileManager.default.homeDirectoryForCurrentUser
+        }
         #else
         let home = URL(fileURLWithPath: NSHomeDirectory(), isDirectory: true)
         #endif

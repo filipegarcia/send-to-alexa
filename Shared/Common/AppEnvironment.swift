@@ -3,8 +3,9 @@ import Foundation
 
 /// Builds the `SendToAlexa` service shared by the app and its share extension.
 ///
-/// Both targets declare the same Keychain Sharing group; its full id (`<TeamID>.<bundle prefix>.SendToAlexa.shared`)
+/// iOS: the app and extension share a Keychain Sharing group; its full id (`<TeamID>.<prefix>.SendToAlexa.shared`)
 /// is injected into each Info.plist as `KeychainAccessGroup` by the build settings in `Config/Base.xcconfig`.
+/// macOS: the app, extension and CLI share `~/.config/send-to-alexa` (0600 files).
 enum AppEnvironment {
     static let appName = "Send to Alexa"
 
@@ -16,8 +17,14 @@ enum AppEnvironment {
     }
 
     static let service: SendToAlexa = {
-        let keychain = KeychainStore(service: "SendToAlexa", accessGroup: keychainAccessGroup)
-        return SendToAlexa(store: AlexaStore(keychain), appName: appName)
+        #if os(macOS)
+        // Mac: share ~/.config/send-to-alexa with the CLI. Works without an Apple Developer account
+        // (no Keychain Sharing entitlement needed) — see the temporary-exception entitlement in project.yml.
+        let backing: BlobStore = FileStore(directory: FileStore.defaultDirectory())
+        #else
+        let backing: BlobStore = KeychainStore(service: "SendToAlexa", accessGroup: keychainAccessGroup)
+        #endif
+        return SendToAlexa(store: AlexaStore(backing), appName: appName)
     }()
 
     /// Best guess at the user's Alexa marketplace from the device region.

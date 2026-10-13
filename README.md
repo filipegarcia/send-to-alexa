@@ -52,17 +52,19 @@ you want sharing to start playback with no further taps.
 ## Quick start (Mac)
 
 ```bash
-make setup TEAM=<your Team ID> PREFIX=com.<yourname>   # once, same as for iPhone
-open SendToAlexa.xcodeproj
+make setup PREFIX=com.<yourname> TEAM=<your Team ID>   # TEAM is optional on the Mac
+make run-mac
 ```
 
-1. Pick the **SendToAlexa-macOS** scheme › **My Mac** › **Run**, then sign in and choose your Echo (same as iPhone).
-2. Enable the extension once: *System Settings › General › Login Items & Extensions › Sharing* (on older macOS:
-   *Extensions › Sharing*) › tick **Send to Alexa**.
-3. In Music.app: right-click a song (or **•••**) › **Share** › **Send to Alexa**. If it isn't listed, choose
-   **More…** at the bottom of the Share menu and enable it there.
+`make run-mac` builds the app, installs it in `~/Applications`, enables its Share extension and opens it.
+No paid developer account is needed: with no Team it's signed to run locally, and with a free Apple ID
+(Xcode › Settings › Apple Accounts) it's signed with your Personal Team.
 
-The Mac app and the iPhone app each keep their own sign-in.
+1. Sign in from the app, or with the CLI (see below). **The Mac app, its Share extension and the CLI share one
+   sign-in** in `~/.config/send-to-alexa`, so signing in once anywhere is enough.
+2. In Music.app: right-click a song (or **•••**) › **Share** › **Send to Alexa**. If it isn't listed, choose
+   **More…** at the bottom of the Share menu (or *System Settings › General › Login Items & Extensions › Sharing*)
+   and enable it.
 
 ## Quick start (terminal)
 
@@ -100,8 +102,9 @@ More detail, request by request: [docs/how-it-works.md](docs/how-it-works.md).
 
 ### Where your data lives
 
-- **iOS/macOS apps:** the Keychain, in an access group shared only by the app and its own share extension.
-- **CLI:** `~/.config/send-to-alexa/*.json`, readable only by you.
+- **iOS app:** the Keychain, in an access group shared only by the app and its own share extension.
+- **Mac app, Mac share extension and CLI:** `~/.config/send-to-alexa/*.json` (mode `0600`, readable only by you).
+  The sandboxed Mac targets get a read/write exception for just that folder.
 - Nothing is sent anywhere except Amazon (sign-in + Alexa) and Apple (link lookup). No analytics, no servers.
 - **Sign out** removes the virtual device from your Amazon account and deletes local data. You can also remove
   it at *amazon.‹tld› › Manage Your Content and Devices › Devices*.
@@ -137,6 +140,7 @@ make test        # AlexaKit unit tests
 make build-ios   # compile iOS app + extension for the simulator (no signing needed)
 make build-macos # compile macOS app + extension (no signing needed)
 make build       # all of the above + tests (what CI runs)
+make run-mac     # build + install + launch the Mac app with its Share extension
 make project     # regenerate SendToAlexa.xcodeproj after editing project.yml (brew install xcodegen)
 make cli         # release build of alexa-send
 ```

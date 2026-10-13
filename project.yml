@@ -135,7 +135,6 @@ targets:
         CFBundleDisplayName: Send to Alexa
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
-        KeychainAccessGroup: $(AppIdentifierPrefix)$(SHARED_KEYCHAIN_GROUP)
         LSApplicationCategoryType: public.app-category.music
         ITSAppUsesNonExemptEncryption: false
     entitlements:
@@ -143,8 +142,9 @@ targets:
       properties:
         com.apple.security.app-sandbox: true
         com.apple.security.network.client: true
-        keychain-access-groups:
-          - $(AppIdentifierPrefix)$(SHARED_KEYCHAIN_GROUP)
+        # Shared sign-in with the CLI. Not a restricted entitlement, so no Apple ID / provisioning is needed.
+        com.apple.security.temporary-exception.files.home-relative-path.read-write:
+          - /.config/send-to-alexa/
 
   # -------------------------------------------------- macOS share extension
   ShareExtension-macOS:
@@ -168,7 +168,6 @@ targets:
         CFBundleDisplayName: Send to Alexa
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
-        KeychainAccessGroup: $(AppIdentifierPrefix)$(SHARED_KEYCHAIN_GROUP)
         NSExtension:
           NSExtensionPointIdentifier: com.apple.share-services
           NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).ShareViewController
@@ -181,8 +180,9 @@ targets:
       properties:
         com.apple.security.app-sandbox: true
         com.apple.security.network.client: true
-        keychain-access-groups:
-          - $(AppIdentifierPrefix)$(SHARED_KEYCHAIN_GROUP)
+        # Shared sign-in with the CLI. Not a restricted entitlement, so no Apple ID / provisioning is needed.
+        com.apple.security.temporary-exception.files.home-relative-path.read-write:
+          - /.config/send-to-alexa/
 
 schemes:
   SendToAlexa-iOS:
