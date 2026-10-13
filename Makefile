@@ -48,12 +48,15 @@ run-mac: ## Build the Mac app, install it in ~/Applications, enable its Share ex
 	@echo "Installed ~/Applications/$(APP_NAME).app — Share › Send to Alexa is now available in Music.app"
 	open "$(HOME)/Applications/$(APP_NAME).app"
 
-icon: ## Re-render the iOS and macOS app icons from scripts/make-icon.swift
+icon: ## Re-render the iOS/macOS app icons and the menu bar glyph from scripts/make-icon.swift
+	@mkdir -p build
 	swift scripts/make-icon.swift iOS/App/Assets.xcassets/AppIcon.appiconset/AppIcon.png
 	swift scripts/make-icon.swift build/mac-icon.png --mac
 	@for s in 16 32 64 128 256 512 1024; do \
 		sips -z $$s $$s build/mac-icon.png --out macOS/App/Assets.xcassets/AppIcon.appiconset/icon_$$s.png >/dev/null; \
 	done
+	swift scripts/make-icon.swift macOS/App/Assets.xcassets/MenuBarIcon.imageset/menubar-18.png --glyph 18
+	swift scripts/make-icon.swift macOS/App/Assets.xcassets/MenuBarIcon.imageset/menubar-36.png --glyph 36
 
 clean: ## Remove build output
 	rm -rf build AlexaKit/.build

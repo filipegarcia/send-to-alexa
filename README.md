@@ -148,7 +148,7 @@ So Send to Alexa does the next best thing: search as precisely as possible, chec
 ├── macOS/App (menu bar app), macOS/ShareExtension
 ├── Config/                   Base.xcconfig + your git-ignored Local.xcconfig
 ├── project.yml               XcodeGen spec → SendToAlexa.xcodeproj
-└── scripts/make-icon.swift   renders the app icon
+└── scripts/make-icon.swift   renders the app icons + menu bar glyph
 ```
 
 ## Development
@@ -200,6 +200,13 @@ commit credentials — `Config/Local.xcconfig` and anything in `~/.config/send-t
 The Amazon sign-in and Alexa API details come from the excellent work in
 [alexa-remote-control], [alexa-cookie2] / [alexa-remote] by Apollon77, [alexa_media_player], and
 [mkb79/Audible](https://github.com/mkb79/Audible).
+
+## Icon
+
+The icon, a speech-bubble ring around a music note on red, is original artwork drawn from vector shapes by
+[`scripts/make-icon.swift`](scripts/make-icon.swift). Run `make icon` to regenerate the iOS and macOS icons and
+the menu bar glyph. It isn't Amazon's or Apple's logo, and it doesn't use SF Symbols, whose license excludes
+app icons.
 
 ## License
 

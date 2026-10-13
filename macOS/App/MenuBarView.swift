@@ -7,7 +7,10 @@ struct MenuBarLabel: View {
 
     var body: some View {
         HStack(spacing: 4) {
-            Image(systemName: model.isPlaying ? "hifispeaker.fill" : "hifispeaker")
+            // Template image (adapts to light/dark menu bars), rendered by scripts/make-icon.swift --glyph.
+            Image("MenuBarIcon")
+                .renderingMode(.template)
+                .opacity(model.isPlaying ? 1 : 0.85)
             if let title = model.menuBarTitle {
                 Text(title)
             }

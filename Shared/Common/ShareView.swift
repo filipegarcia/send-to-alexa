@@ -7,19 +7,8 @@ struct ShareView: View {
     var onClose: () -> Void
 
     var body: some View {
-        NavigationStack {
-            content
-                .navigationTitle("Send to Alexa")
-                #if os(iOS)
-                .navigationBarTitleDisplayMode(.inline)
-                #endif
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button("Cancel", action: onClose)
-                    }
-                }
-        }
-        .task { await model.start() }
+        container
+            .task { await model.start() }
         .onChange(of: model.phase) { _, phase in
             if case .sent = phase {
                 Task {
@@ -28,6 +17,45 @@ struct ShareView: View {
                 }
             }
         }
+    }
+
+    /// iOS: navigation bar with Cancel. macOS: share extensions don't show a toolbar, so draw our own
+    /// header with a close button (Esc works too).
+    @ViewBuilder
+    private var container: some View {
+        #if os(macOS)
+        VStack(spacing: 0) {
+            HStack {
+                Text("Send to Alexa").font(.headline)
+                Spacer()
+                Button(action: onClose) {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.title2)
+                        .symbolRenderingMode(.hierarchical)
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+                .keyboardShortcut(.cancelAction)
+                .help("Close (Esc)")
+                .accessibilityLabel("Close")
+            }
+            .padding(.horizontal, 18)
+            .padding(.top, 14)
+            .padding(.bottom, 2)
+            content
+        }
+        #else
+        NavigationStack {
+            content
+                .navigationTitle("Send to Alexa")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancel", action: onClose)
+                    }
+                }
+        }
+        #endif
     }
 
     @ViewBuilder
