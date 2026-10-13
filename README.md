@@ -8,6 +8,10 @@ Share a song from **Apple Music** on your iPhone (or Mac) and it starts playing 
 Apple Music ─▶ Share ─▶ Send to Alexa ─▶ pick "Kitchen" ─▶ ▶︎ plays on the Kitchen Echo
 ```
 
+| 1. Share from Music.app | 2. Pick the Echo | 3. Control it from the menu bar |
+| :---: | :---: | :---: |
+| <img src="docs/images/share-menu.png" width="300" alt="Music.app Share menu with Send to Alexa"> | <img src="docs/images/share-sheet.png" width="260" alt="Send to Alexa share sheet: song, search phrase, Echo picker, Play button"> | <img src="docs/images/menu-bar.png" width="260" alt="Menu bar app showing now playing, progress, controls and volume"> |
+
 There is no official way to do this: Alexa skills can't be triggered from your phone, and they can't play
 Apple Music. So this project skips skills entirely and does what the Alexa app itself does — it asks Alexa to run a
 one-off routine with a *"play ‹song› by ‹artist› on Apple Music"* step on the device you picked.
