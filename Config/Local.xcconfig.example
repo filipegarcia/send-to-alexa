@@ -1,0 +1,7 @@
+// Copy to Config/Local.xcconfig (git-ignored) and fill in — or run: make setup TEAM=ABCDE12345 PREFIX=com.yourname
+
+// Your Apple Developer Team ID (10 characters). A free Apple ID "Personal Team" works for running on your own iPhone.
+DEVELOPMENT_TEAM = ABCDE12345
+
+// Any reverse-DNS prefix you own / that is unique to you.
+BUNDLE_ID_PREFIX = com.yourname

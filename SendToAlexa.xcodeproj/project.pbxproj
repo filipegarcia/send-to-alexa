@@ -1,0 +1,576 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		01915AA4A22830C89FE04E33 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5248FF21577ED53221BECA75 /* ShareViewController.swift */; };
+		0454A3345896CEE2CD3F303B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1C05817EC5F9580E44E353 /* ContentView.swift */; };
+		061DA0839F148F9BC438084C /* AppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C37C4C818A68218BF0859EAB /* AppEnvironment.swift */; };
+		1717E5B1022286EF6FF65EE7 /* ShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB5F9BAF71BC7AD20567744F /* ShareView.swift */; };
+		41DCABD2E3A60AE90F2462D1 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0494536C8A545097C2F7306D /* AppModel.swift */; };
+		540D2EF6AB5DC4C1BEBD125C /* AmazonSignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E87404C1CB5EE5E3676FECF /* AmazonSignInView.swift */; };
+		556EDBDD2726BFD894E1FBE0 /* ShareModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40840D437DFCFA1A5A1CBCD8 /* ShareModel.swift */; };
+		5A3EBC30DC8B1467CE6407B7 /* AlexaKit in Frameworks */ = {isa = PBXBuildFile; productRef = 78354CB8E8563A203B5BEDAC /* AlexaKit */; };
+		7802A9E23B642DA05DDD908F /* AppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C37C4C818A68218BF0859EAB /* AppEnvironment.swift */; };
+		838C62561DCE003CCF6B2599 /* ShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB5F9BAF71BC7AD20567744F /* ShareView.swift */; };
+		920EF2D2E9720EC1F97A2B67 /* SendToAlexaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70A63EBD77223C27675176DB /* SendToAlexaApp.swift */; };
+		C9AE87CEE57A955DDD843D2D /* ShareModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40840D437DFCFA1A5A1CBCD8 /* ShareModel.swift */; };
+		CA9CE208DD8778557248A48A /* AlexaKit in Frameworks */ = {isa = PBXBuildFile; productRef = 23D772FE35E0024A783C074B /* AlexaKit */; };
+		EA5391D679863CDF3A2AE782 /* ShareExtension-iOS.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 3CBCED08137B9F97F7FDFC81 /* ShareExtension-iOS.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		FA1E165F8A56CD0E27F75E42 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8F1232C761BB00BF84A85E8E /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		68A3233D991DF6964027D1C0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A030D7A87096A3C6645818D3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FD2705537A3D1E54F1E2D81A;
+			remoteInfo = "ShareExtension-iOS";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		81B5917AF1F1D90D3AA6DDEC /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				EA5391D679863CDF3A2AE782 /* ShareExtension-iOS.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0494536C8A545097C2F7306D /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		19759BF96FC6473950803E5F /* SendToAlexa-iOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = "SendToAlexa-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		209DD8DB4079E5EF771D49C1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		3622DAC05EAC2098AAE68F28 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		3CBCED08137B9F97F7FDFC81 /* ShareExtension-iOS.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = "ShareExtension-iOS.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3E87404C1CB5EE5E3676FECF /* AmazonSignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmazonSignInView.swift; sourceTree = "<group>"; };
+		40840D437DFCFA1A5A1CBCD8 /* ShareModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareModel.swift; sourceTree = "<group>"; };
+		5248FF21577ED53221BECA75 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
+		53216BA951F31DBAF3239E0E /* SendToAlexa.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SendToAlexa.entitlements; sourceTree = "<group>"; };
+		6CF94917DDFE21FA9F400420 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
+		70A63EBD77223C27675176DB /* SendToAlexaApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToAlexaApp.swift; sourceTree = "<group>"; };
+		7A1C05817EC5F9580E44E353 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		8F1232C761BB00BF84A85E8E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		9F515098CCE6902E2F926920 /* ShareExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShareExtension.entitlements; sourceTree = "<group>"; };
+		B34208ACAC86DB26670FCB08 /* AlexaKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = AlexaKit; path = AlexaKit; sourceTree = SOURCE_ROOT; };
+		C37C4C818A68218BF0859EAB /* AppEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEnvironment.swift; sourceTree = "<group>"; };
+		DB5F9BAF71BC7AD20567744F /* ShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		DA2B99409AF7564544D7CC6C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CA9CE208DD8778557248A48A /* AlexaKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DA71D3284D6B59A67164D9A9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5A3EBC30DC8B1467CE6407B7 /* AlexaKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		3E000C3E83988F5E34E06DA3 /* ShareExtension */ = {
+			isa = PBXGroup;
+			children = (
+				3622DAC05EAC2098AAE68F28 /* Info.plist */,
+				9F515098CCE6902E2F926920 /* ShareExtension.entitlements */,
+				5248FF21577ED53221BECA75 /* ShareViewController.swift */,
+			);
+			path = ShareExtension;
+			sourceTree = "<group>";
+		};
+		4231BF0047B699DCE8C60AA8 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				42417C7E532AFFA92BD4A199 /* App */,
+				842B55E64C335582B998B43A /* Common */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		42417C7E532AFFA92BD4A199 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				3E87404C1CB5EE5E3676FECF /* AmazonSignInView.swift */,
+				0494536C8A545097C2F7306D /* AppModel.swift */,
+				7A1C05817EC5F9580E44E353 /* ContentView.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		77092CD7925E17FE7F8D16CA = {
+			isa = PBXGroup;
+			children = (
+				BC3DE59014FBCCABE525D11C /* Config */,
+				876A3D89D254B88A88D101C9 /* iOS */,
+				8DADAD8C96EC07797831EE6B /* Packages */,
+				4231BF0047B699DCE8C60AA8 /* Shared */,
+				A65668AAE94B9644A95D35CC /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		842B55E64C335582B998B43A /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				C37C4C818A68218BF0859EAB /* AppEnvironment.swift */,
+				40840D437DFCFA1A5A1CBCD8 /* ShareModel.swift */,
+				DB5F9BAF71BC7AD20567744F /* ShareView.swift */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		876A3D89D254B88A88D101C9 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				947D683819592003D69645A0 /* App */,
+				3E000C3E83988F5E34E06DA3 /* ShareExtension */,
+			);
+			path = iOS;
+			sourceTree = "<group>";
+		};
+		8DADAD8C96EC07797831EE6B /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				B34208ACAC86DB26670FCB08 /* AlexaKit */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+		947D683819592003D69645A0 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				8F1232C761BB00BF84A85E8E /* Assets.xcassets */,
+				209DD8DB4079E5EF771D49C1 /* Info.plist */,
+				53216BA951F31DBAF3239E0E /* SendToAlexa.entitlements */,
+				70A63EBD77223C27675176DB /* SendToAlexaApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		A65668AAE94B9644A95D35CC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				19759BF96FC6473950803E5F /* SendToAlexa-iOS.app */,
+				3CBCED08137B9F97F7FDFC81 /* ShareExtension-iOS.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		BC3DE59014FBCCABE525D11C /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				6CF94917DDFE21FA9F400420 /* Base.xcconfig */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		0B608A105A95EB19C0BE974B /* SendToAlexa-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8B852C60388ADD9CC9D94196 /* Build configuration list for PBXNativeTarget "SendToAlexa-iOS" */;
+			buildPhases = (
+				0C9DDC67246C67DFDD63D47D /* Sources */,
+				6247AC16930089BA40815121 /* Resources */,
+				DA2B99409AF7564544D7CC6C /* Frameworks */,
+				81B5917AF1F1D90D3AA6DDEC /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D43369C633BB3FAD0AE5AE00 /* PBXTargetDependency */,
+			);
+			name = "SendToAlexa-iOS";
+			packageProductDependencies = (
+				23D772FE35E0024A783C074B /* AlexaKit */,
+			);
+			productName = "SendToAlexa-iOS";
+			productReference = 19759BF96FC6473950803E5F /* SendToAlexa-iOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+		FD2705537A3D1E54F1E2D81A /* ShareExtension-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5A7A6CD1F96DBA7B59319603 /* Build configuration list for PBXNativeTarget "ShareExtension-iOS" */;
+			buildPhases = (
+				CD5195237F9B0581BE23B6BA /* Sources */,
+				DA71D3284D6B59A67164D9A9 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "ShareExtension-iOS";
+			packageProductDependencies = (
+				78354CB8E8563A203B5BEDAC /* AlexaKit */,
+			);
+			productName = "ShareExtension-iOS";
+			productReference = 3CBCED08137B9F97F7FDFC81 /* ShareExtension-iOS.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A030D7A87096A3C6645818D3 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					0B608A105A95EB19C0BE974B = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+					FD2705537A3D1E54F1E2D81A = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 01F2BEF81F5BB307130AA0FB /* Build configuration list for PBXProject "SendToAlexa" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 77092CD7925E17FE7F8D16CA;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				E6FE16E3D081A42387BAA066 /* XCLocalSwiftPackageReference "AlexaKit" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = A65668AAE94B9644A95D35CC /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				0B608A105A95EB19C0BE974B /* SendToAlexa-iOS */,
+				FD2705537A3D1E54F1E2D81A /* ShareExtension-iOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		6247AC16930089BA40815121 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FA1E165F8A56CD0E27F75E42 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0C9DDC67246C67DFDD63D47D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				540D2EF6AB5DC4C1BEBD125C /* AmazonSignInView.swift in Sources */,
+				061DA0839F148F9BC438084C /* AppEnvironment.swift in Sources */,
+				41DCABD2E3A60AE90F2462D1 /* AppModel.swift in Sources */,
+				0454A3345896CEE2CD3F303B /* ContentView.swift in Sources */,
+				920EF2D2E9720EC1F97A2B67 /* SendToAlexaApp.swift in Sources */,
+				556EDBDD2726BFD894E1FBE0 /* ShareModel.swift in Sources */,
+				838C62561DCE003CCF6B2599 /* ShareView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CD5195237F9B0581BE23B6BA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7802A9E23B642DA05DDD908F /* AppEnvironment.swift in Sources */,
+				C9AE87CEE57A955DDD843D2D /* ShareModel.swift in Sources */,
+				1717E5B1022286EF6FF65EE7 /* ShareView.swift in Sources */,
+				01915AA4A22830C89FE04E33 /* ShareViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D43369C633BB3FAD0AE5AE00 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FD2705537A3D1E54F1E2D81A /* ShareExtension-iOS */;
+			targetProxy = 68A3233D991DF6964027D1C0 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		52FB77EBE1F46403579169CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = iOS/ShareExtension/ShareExtension.entitlements;
+				INFOPLIST_FILE = iOS/ShareExtension/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(BUNDLE_ID_PREFIX).SendToAlexa.ShareExtension";
+				PRODUCT_NAME = ShareExtension;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		86B4FA5590A75D06FA2E4CAA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6CF94917DDFE21FA9F400420 /* Base.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		B44A77779355824C774EBFC1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6CF94917DDFE21FA9F400420 /* Base.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		D670DB4FEBC8B3B965832AB1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = iOS/ShareExtension/ShareExtension.entitlements;
+				INFOPLIST_FILE = iOS/ShareExtension/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(BUNDLE_ID_PREFIX).SendToAlexa.ShareExtension";
+				PRODUCT_NAME = ShareExtension;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		DD094457345E98CCA8C2AF44 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = iOS/App/SendToAlexa.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = iOS/App/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(BUNDLE_ID_PREFIX).SendToAlexa";
+				PRODUCT_NAME = SendToAlexa;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		E7CD1E264230C19FFE5EB4FD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = iOS/App/SendToAlexa.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = iOS/App/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(BUNDLE_ID_PREFIX).SendToAlexa";
+				PRODUCT_NAME = SendToAlexa;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		01F2BEF81F5BB307130AA0FB /* Build configuration list for PBXProject "SendToAlexa" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				86B4FA5590A75D06FA2E4CAA /* Debug */,
+				B44A77779355824C774EBFC1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		5A7A6CD1F96DBA7B59319603 /* Build configuration list for PBXNativeTarget "ShareExtension-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D670DB4FEBC8B3B965832AB1 /* Debug */,
+				52FB77EBE1F46403579169CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		8B852C60388ADD9CC9D94196 /* Build configuration list for PBXNativeTarget "SendToAlexa-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E7CD1E264230C19FFE5EB4FD /* Debug */,
+				DD094457345E98CCA8C2AF44 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		E6FE16E3D081A42387BAA066 /* XCLocalSwiftPackageReference "AlexaKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = AlexaKit;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		23D772FE35E0024A783C074B /* AlexaKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AlexaKit;
+		};
+		78354CB8E8563A203B5BEDAC /* AlexaKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AlexaKit;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = A030D7A87096A3C6645818D3 /* Project object */;
+}

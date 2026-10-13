@@ -1,0 +1,18 @@
+// Build settings shared by every target.
+//
+// Don't edit this file to set up signing — copy Config/Local.xcconfig.example to
+// Config/Local.xcconfig (git-ignored) and put your Team ID and bundle id prefix there.
+
+// Reverse-DNS prefix for all bundle identifiers. Must be unique to you for device builds.
+BUNDLE_ID_PREFIX = com.example
+
+// Your Apple Developer Team ID (Xcode › Settings › Accounts, or developer.apple.com › Membership).
+DEVELOPMENT_TEAM =
+
+CODE_SIGN_STYLE = Automatic
+
+// Keychain Sharing group used by the app and its share extension to share the Amazon sign-in.
+// The full group id is $(AppIdentifierPrefix)$(SHARED_KEYCHAIN_GROUP) — see the .entitlements files.
+SHARED_KEYCHAIN_GROUP = $(BUNDLE_ID_PREFIX).SendToAlexa.shared
+
+#include? "Local.xcconfig"
