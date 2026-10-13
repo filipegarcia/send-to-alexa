@@ -8,6 +8,7 @@
 // Usage:
 //   swift scripts/make-icon.swift <output.png>            iOS icon (1024, full bleed, opaque)
 //   swift scripts/make-icon.swift <output.png> --mac      macOS icon (1024, rounded tile + shadow)
+//   add --small for the 16–64 px variants (bigger, outlined mark)
 //   swift scripts/make-icon.swift <output.png> --glyph N  menu bar template glyph (N×N px, black on clear)
 //   add --ring-white for a white ring instead of Alexa-cyan
 import AppKit
@@ -15,6 +16,8 @@ import AppKit
 let args = CommandLine.arguments
 let output = args.dropFirst().first ?? "AppIcon.png"
 let mac = args.contains("--mac")
+/// Small sizes (16–64 px): bigger mark, dark outline, no soft shadow — readable in menus and lists.
+let small = args.contains("--small")
 let glyphSize = args.firstIndex(of: "--glyph").flatMap { Int(args[$0 + 1]) }
 let cyanRing = !args.contains("--ring-white")
 
@@ -22,7 +25,7 @@ let cyanRing = !args.contains("--ring-white")
 
 /// Ring with a speech-bubble tail at the bottom-left (ring and tail are separate shapes so they don't cancel out).
 let markCenter = NSPoint(x: 512, y: 528)
-let outerRadius: CGFloat = 352, innerRadius: CGFloat = 274
+let outerRadius: CGFloat = 352, innerRadius: CGFloat = 252
 
 func ringPath() -> NSBezierPath {
     let path = NSBezierPath()
@@ -137,8 +140,8 @@ if mac {
 }
 
 let alexaCyan = NSGradient(colors: [
-    NSColor(srgbRed: 0.42, green: 0.91, blue: 1.00, alpha: 1),
-    NSColor(srgbRed: 0.00, green: 0.74, blue: 1.00, alpha: 1),
+    NSColor(srgbRed: 0.35, green: 0.88, blue: 1.00, alpha: 1),
+    NSColor(srgbRed: 0.00, green: 0.62, blue: 0.95, alpha: 1),
 ])!
 
 // Apple Music–style red: #FB5C74 (top) → #FA233B (bottom).
@@ -147,13 +150,31 @@ NSGradient(colors: [
     NSColor(srgbRed: 250 / 255, green: 35 / 255, blue: 59 / 255, alpha: 1),
 ])!.draw(in: NSRect(x: 0, y: 0, width: 1024, height: 1024), angle: -90)
 
+if small {
+    // Enlarge the mark around its centre so it survives being shrunk to 16–32 px.
+    let t = NSAffineTransform()
+    t.translateX(by: 512, yBy: 505)
+    t.scale(by: 1.1)
+    t.translateX(by: -512, yBy: -505)
+    t.concat()
+}
+
+// Dark outline around ring + tail and note: separates cyan/white from the red, especially when small.
+let outline = NSColor(srgbRed: 0.30, green: 0.02, blue: 0.08, alpha: small ? 0.75 : 0.45)
+for shape in [ringPath(), tailPath(), notePath()] {
+    outline.setStroke()
+    shape.lineWidth = small ? 32 : 22
+    shape.lineJoinStyle = .round
+    shape.stroke()
+}
+
 // Soft shadow under the mark for depth.
 let markShadow = NSShadow()
 markShadow.shadowColor = NSColor(srgbRed: 0.45, green: 0, blue: 0.08, alpha: 0.35)
 markShadow.shadowBlurRadius = 30
 markShadow.shadowOffset = NSSize(width: 0, height: -12)
 NSGraphicsContext.saveGraphicsState()
-markShadow.set()
+if !small { markShadow.set() }
 
 // Ring and tail are painted with one canvas-wide gradient (clipped to each), so the colour flows through both.
 if cyanRing {

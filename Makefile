@@ -60,8 +60,12 @@ icon: ## Re-render the iOS/macOS app icons and the menu bar glyph from scripts/m
 	@mkdir -p build
 	swift scripts/make-icon.swift iOS/App/Assets.xcassets/AppIcon.appiconset/AppIcon.png
 	swift scripts/make-icon.swift build/mac-icon.png --mac
-	@for s in 16 32 64 128 256 512 1024; do \
+	swift scripts/make-icon.swift build/mac-icon-small.png --mac --small
+	@for s in 128 256 512 1024; do \
 		sips -z $$s $$s build/mac-icon.png --out macOS/App/Assets.xcassets/AppIcon.appiconset/icon_$$s.png >/dev/null; \
+	done
+	@for s in 16 32 64; do \
+		sips -z $$s $$s build/mac-icon-small.png --out macOS/App/Assets.xcassets/AppIcon.appiconset/icon_$$s.png >/dev/null; \
 	done
 	swift scripts/make-icon.swift macOS/App/Assets.xcassets/MenuBarIcon.imageset/menubar-18.png --glyph 18
 	swift scripts/make-icon.swift macOS/App/Assets.xcassets/MenuBarIcon.imageset/menubar-36.png --glyph 36
