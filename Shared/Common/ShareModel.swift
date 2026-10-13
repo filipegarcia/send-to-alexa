@@ -111,6 +111,9 @@ final class ShareModel {
             let result = try await service.playVerified(item, phrase: phrase, on: device, provider: provider) { [weak self] message in
                 Task { @MainActor in self?.progressMessage = message }
             }
+            #if os(macOS)
+            AppEnvironment.announcePlayed()
+            #endif
             switch result.verdict {
             case .matched:
                 phase = .sent(device: device.accountName, playing: result.nowPlaying?.summary, verified: true)

@@ -27,6 +27,17 @@ enum AppEnvironment {
         return SendToAlexa(store: AlexaStore(backing), appName: appName)
     }()
 
+    #if os(macOS)
+    /// Posted (Mac) after something was sent to an Echo, so the menu bar refreshes immediately.
+    static let didPlayNotification = Notification.Name("com.sendtoalexa.didPlay")
+
+    static func announcePlayed() {
+        DistributedNotificationCenter.default().postNotificationName(
+            didPlayNotification, object: nil, userInfo: nil, deliverImmediately: true
+        )
+    }
+    #endif
+
     /// Best guess at the user's Alexa marketplace from the device region.
     static var suggestedMarketplace: AmazonRegion {
         switch Locale.current.region?.identifier.uppercased() {

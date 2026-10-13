@@ -36,11 +36,12 @@ if mac {
     transform.concat()
 }
 
+// Apple Music–style red: #FB5C74 (top) → #FA233B (bottom).
 let gradient = NSGradient(colors: [
-    NSColor(calibratedRed: 0.36, green: 0.27, blue: 0.95, alpha: 1),
-    NSColor(calibratedRed: 0.0, green: 0.68, blue: 0.95, alpha: 1),
+    NSColor(srgbRed: 251 / 255, green: 92 / 255, blue: 116 / 255, alpha: 1),
+    NSColor(srgbRed: 250 / 255, green: 35 / 255, blue: 59 / 255, alpha: 1),
 ])!
-gradient.draw(in: NSRect(x: 0, y: 0, width: size, height: size), angle: -60)
+gradient.draw(in: NSRect(x: 0, y: 0, width: size, height: size), angle: -90)
 
 func symbol(_ name: String, pointSize: CGFloat, weight: NSFont.Weight) -> NSImage {
     let config = NSImage.SymbolConfiguration(pointSize: pointSize, weight: weight)

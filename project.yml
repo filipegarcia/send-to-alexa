@@ -5,7 +5,7 @@ name: SendToAlexa
 options:
   deploymentTarget:
     iOS: "17.0"
-    macOS: "14.0"
+    macOS: "15.0"
   createIntermediateGroups: true
   groupSortPosition: top
 
@@ -136,6 +136,8 @@ targets:
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         LSApplicationCategoryType: public.app-category.music
+        # Menu bar app: no Dock icon.
+        LSUIElement: true
         ITSAppUsesNonExemptEncryption: false
     entitlements:
       path: macOS/App/SendToAlexa.entitlements

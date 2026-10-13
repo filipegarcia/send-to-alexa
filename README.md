@@ -24,7 +24,7 @@ one-off routine with a *"play ‹song› by ‹artist› on Apple Music"* step o
 | **iOS share extension** (`iOS/ShareExtension`) | Appears in the Share sheet of Apple Music (and Safari, Messages, …). Shows the song, lets you pick the Echo, plays. |
 | **AlexaKit** (`AlexaKit/`) | Swift package with all the logic: Amazon sign-in, device list, play/speak, Apple Music link → search phrase. No dependencies. |
 | **`alexa-send` CLI** (`AlexaKit/Sources/alexa-send`) | Same features from the terminal. Great for trying things out and for scripts. |
-| **macOS app + share extension** (`macOS/`) | Same thing for the Mac: Music.app › song › Share › Send to Alexa. |
+| **macOS menu bar app + share extension** (`macOS/`) | Lives in the menu bar: what your Echo is playing (artwork, progress), play/pause/skip/volume, pick the Echo, play a copied link. Plus Music.app › Share › Send to Alexa. |
 
 ## Quick start (iPhone)
 
@@ -57,6 +57,9 @@ make run-mac
 ```
 
 `make run-mac` builds the app, installs it in `~/Applications`, enables its Share extension and opens it.
+It's a **menu bar app** (no Dock icon): click the speaker icon to see what your Echo is playing, control it,
+switch Echo, or play an Apple Music link you've copied. Optional: show the song title in the menu bar, launch at
+login. "Settings…" opens the sign-in / preferences window.
 No paid developer account is needed: with no Team it's signed to run locally, and with a free Apple ID
 (Xcode › Settings › Apple Accounts) it's signed with your Personal Team.
 
@@ -76,6 +79,7 @@ swift run alexa-send play --device Kitchen "https://music.apple.com/de/album/bet
 swift run alexa-send play "Today's Hits playlist"    # any search works too
 swift run alexa-send play --check --device Kitchen "Bohemian Rhapsody by Queen"   # ask Alexa to validate only — silent
 swift run alexa-send now-playing --device Kitchen    # what is the Echo playing?
+swift run alexa-send control pause --device Kitchen  # play | pause | next | previous | volume 40
 swift run alexa-send --help
 ```
 
@@ -141,7 +145,7 @@ So Send to Alexa does the next best thing: search as precisely as possible, chec
 │   ├── Common/               used by apps *and* share extensions (ShareView, ShareModel)
 │   └── App/                  used by the apps only (ContentView, sign-in web view)
 ├── iOS/App, iOS/ShareExtension
-├── macOS/App, macOS/ShareExtension
+├── macOS/App (menu bar app), macOS/ShareExtension
 ├── Config/                   Base.xcconfig + your git-ignored Local.xcconfig
 ├── project.yml               XcodeGen spec → SendToAlexa.xcodeproj
 └── scripts/make-icon.swift   renders the app icon

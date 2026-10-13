@@ -16,6 +16,7 @@ USAGE
   alexa-send resolve <apple music url | text>
   alexa-send play [--device <name>] [--provider <id>] [--dry-run | --check] [--no-verify] [--no-retry] <url | phrase...>
   alexa-send now-playing [--device <name>]
+  alexa-send control <play|pause|next|previous|volume <0-100>> [--device <name>]
   alexa-send speak [--device <name>] <text...>
   alexa-send providers
   alexa-send api <GET|POST|PUT> <path> [json-body]     (raw Alexa web API call, for exploring)
@@ -260,6 +261,28 @@ func run() async throws {
         } else {
             print("\(device.accountName): nothing playing")
         }
+
+    case "control":
+        guard let action = args.positionals.first?.lowercased() else {
+            throw CLIError("Usage: alexa-send control <play|pause|next|previous|volume <0-100>>")
+        }
+        let command: PlayerCommand
+        switch action {
+        case "play", "resume": command = .play
+        case "pause", "stop": command = .pause
+        case "next", "skip": command = .next
+        case "previous", "prev", "back": command = .previous
+        case "volume", "vol":
+            guard let level = args.positionals.dropFirst().first.flatMap(Int.init) else {
+                throw CLIError("Usage: alexa-send control volume <0-100>")
+            }
+            command = .volume(level)
+        default:
+            throw CLIError("Unknown control \"\(action)\" (play, pause, next, previous, volume N)")
+        }
+        let device = try await resolveDevice(args.options["device"])
+        try await app.client().send(command, to: device)
+        print("\(device.accountName): \(action)\(args.positionals.count > 1 ? " \(args.positionals[1])" : "")")
 
     case "speak":
         let text = args.positionals.joined(separator: " ")

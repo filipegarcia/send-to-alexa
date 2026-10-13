@@ -16,15 +16,31 @@ public struct NowPlaying: Equatable, Sendable, Codable {
     public var artworkURL: URL?
     /// Changes every time something new is queued; used to detect that *our* request started playing.
     public var queueId: String?
+    /// Position and length of the current item, in seconds (when the Echo reports them).
+    public var progressSeconds: Int?
+    public var lengthSeconds: Int?
 
-    public init(state: String? = nil, title: String? = nil, subtitle: String? = nil, provider: String? = nil, artworkURL: URL? = nil, queueId: String? = nil) {
+    public init(
+        state: String? = nil,
+        title: String? = nil,
+        subtitle: String? = nil,
+        provider: String? = nil,
+        artworkURL: URL? = nil,
+        queueId: String? = nil,
+        progressSeconds: Int? = nil,
+        lengthSeconds: Int? = nil
+    ) {
         self.state = state
         self.title = title
         self.subtitle = subtitle
         self.provider = provider
         self.artworkURL = artworkURL
         self.queueId = queueId
+        self.progressSeconds = progressSeconds
+        self.lengthSeconds = lengthSeconds
     }
+
+    public var isPaused: Bool { state == "PAUSED" }
 
     public var isPlaying: Bool { state == "PLAYING" }
 
@@ -39,13 +55,16 @@ public struct NowPlaying: Equatable, Sendable, Codable {
         let text = info["infoText"] as? [String: Any]
         let provider = info["provider"] as? [String: Any]
         let art = info["mainArt"] as? [String: Any]
+        let progress = info["progress"] as? [String: Any]
         let result = NowPlaying(
             state: info["state"] as? String,
             title: text?["title"] as? String,
             subtitle: text?["subText1"] as? String,
             provider: provider?["providerName"] as? String,
             artworkURL: (art?["url"] as? String).flatMap(URL.init(string:)),
-            queueId: info["queueId"] as? String
+            queueId: info["queueId"] as? String,
+            progressSeconds: (progress?["mediaProgress"] as? NSNumber)?.intValue,
+            lengthSeconds: (progress?["mediaLength"] as? NSNumber)?.intValue
         )
         return result.state == nil && result.title == nil ? nil : result
     }
