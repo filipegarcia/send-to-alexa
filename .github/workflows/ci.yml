@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use the newest Xcode on the runner
+        run: |
+          XCODE=$(ls -d /Applications/Xcode*.app | sort -V | tail -1)
+          sudo xcode-select -s "$XCODE"
+          xcodebuild -version
+
+      - name: AlexaKit unit tests
+        working-directory: AlexaKit
+        run: swift test
+
+      - name: Build CLI
+        working-directory: AlexaKit
+        run: swift build -c release --product alexa-send
+
+      - name: Build iOS app + share extension
+        run: >
+          xcodebuild -project SendToAlexa.xcodeproj -scheme SendToAlexa-iOS
+          -destination 'generic/platform=iOS Simulator'
+          CODE_SIGNING_ALLOWED=NO -quiet build
+
+      - name: Build macOS app + share extension
+        run: >
+          xcodebuild -project SendToAlexa.xcodeproj -scheme SendToAlexa-macOS
+          -destination 'generic/platform=macOS'
+          CODE_SIGNING_ALLOWED=NO -quiet build

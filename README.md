@@ -1,5 +1,7 @@
 # Send to Alexa
 
+[![CI](https://github.com/filipegarcia/send-to-alexa/actions/workflows/ci.yml/badge.svg)](https://github.com/filipegarcia/send-to-alexa/actions/workflows/ci.yml)
+
 Share a song from **Apple Music** on your iPhone (or Mac) and it starts playing on the **Echo of your choice**.
 
 ```
@@ -22,7 +24,7 @@ one-off routine with a *"play ‹song› by ‹artist› on Apple Music"* step o
 | **iOS share extension** (`iOS/ShareExtension`) | Appears in the Share sheet of Apple Music (and Safari, Messages, …). Shows the song, lets you pick the Echo, plays. |
 | **AlexaKit** (`AlexaKit/`) | Swift package with all the logic: Amazon sign-in, device list, play/speak, Apple Music link → search phrase. No dependencies. |
 | **`alexa-send` CLI** (`AlexaKit/Sources/alexa-send`) | Same features from the terminal. Great for trying things out and for scripts. |
-| macOS app + share extension | *Next up* — same code, for the Share menu in Music.app. |
+| **macOS app + share extension** (`macOS/`) | Same thing for the Mac: Music.app › song › Share › Send to Alexa. |
 
 ## Quick start (iPhone)
 
@@ -46,6 +48,21 @@ open SendToAlexa.xcodeproj
 
 The share sheet preselects your default Echo. Turn on *"Play immediately on the default Echo"* in the app if
 you want sharing to start playback with no further taps.
+
+## Quick start (Mac)
+
+```bash
+make setup TEAM=<your Team ID> PREFIX=com.<yourname>   # once, same as for iPhone
+open SendToAlexa.xcodeproj
+```
+
+1. Pick the **SendToAlexa-macOS** scheme › **My Mac** › **Run**, then sign in and choose your Echo (same as iPhone).
+2. Enable the extension once: *System Settings › General › Login Items & Extensions › Sharing* (on older macOS:
+   *Extensions › Sharing*) › tick **Send to Alexa**.
+3. In Music.app: right-click a song (or **•••**) › **Share** › **Send to Alexa**. If it isn't listed, choose
+   **More…** at the bottom of the Share menu and enable it there.
+
+The Mac app and the iPhone app each keep their own sign-in.
 
 ## Quick start (terminal)
 
@@ -82,7 +99,7 @@ More detail, request by request: [docs/how-it-works.md](docs/how-it-works.md).
 
 ### Where your data lives
 
-- **iOS/macOS:** the Keychain, in an access group shared only by the app and its own share extension.
+- **iOS/macOS apps:** the Keychain, in an access group shared only by the app and its own share extension.
 - **CLI:** `~/.config/send-to-alexa/*.json`, readable only by you.
 - Nothing is sent anywhere except Amazon (sign-in + Alexa) and Apple (link lookup). No analytics, no servers.
 - **Sign out** removes the virtual device from your Amazon account and deletes local data. You can also remove
@@ -105,6 +122,7 @@ More detail, request by request: [docs/how-it-works.md](docs/how-it-works.md).
 │   ├── Common/               used by apps *and* share extensions (ShareView, ShareModel)
 │   └── App/                  used by the apps only (ContentView, sign-in web view)
 ├── iOS/App, iOS/ShareExtension
+├── macOS/App, macOS/ShareExtension
 ├── Config/                   Base.xcconfig + your git-ignored Local.xcconfig
 ├── project.yml               XcodeGen spec → SendToAlexa.xcodeproj
 └── scripts/make-icon.swift   renders the app icon
@@ -115,7 +133,9 @@ More detail, request by request: [docs/how-it-works.md](docs/how-it-works.md).
 ```bash
 make help        # list tasks
 make test        # AlexaKit unit tests
-make build-ios   # compile app + extension for the simulator (no signing needed)
+make build-ios   # compile iOS app + extension for the simulator (no signing needed)
+make build-macos # compile macOS app + extension (no signing needed)
+make build       # all of the above + tests (what CI runs)
 make project     # regenerate SendToAlexa.xcodeproj after editing project.yml (brew install xcodegen)
 make cli         # release build of alexa-send
 ```
@@ -138,7 +158,7 @@ try await app.play(music.searchPhrase, on: devices[0], provider: .appleMusic)
 
 | Symptom | Fix |
 | --- | --- |
-| "Send to Alexa" missing from the share sheet | Scroll the app row to the end › **More** › enable it. Run the app once first. |
+| "Send to Alexa" missing from the share sheet | Run the app once first. iPhone: scroll the app row to the end › **More** › enable it. Mac: enable it in System Settings (see Quick start). |
 | Share sheet says "Not signed in" | Open the app and sign in. App and extension must be signed with the same Team (they share a Keychain group). |
 | Plays the wrong version | Edit the phrase in the share sheet (e.g. add "live" or the album name). |
 | "Provider not linked" / nothing plays | Link Apple Music in the Alexa app and check the music service picker in Send to Alexa. |

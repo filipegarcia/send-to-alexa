@@ -26,12 +26,20 @@ cli: ## Build the alexa-send CLI (release) into AlexaKit/.build/release/alexa-se
 
 build-ios: ## Compile the iOS app + share extension for the simulator (no signing needed)
 	xcodebuild -project $(PROJECT) -scheme SendToAlexa-iOS -destination 'generic/platform=iOS Simulator' \
-		-derivedDataPath $(DERIVED) -quiet build
+		-derivedDataPath $(DERIVED) CODE_SIGNING_ALLOWED=NO -quiet build
 
-build: test build-ios ## Test the core and compile every app target
+build-macos: ## Compile the macOS app + share extension (no signing needed)
+	xcodebuild -project $(PROJECT) -scheme SendToAlexa-macOS -destination 'generic/platform=macOS' \
+		-derivedDataPath $(DERIVED) CODE_SIGNING_ALLOWED=NO -quiet build
 
-icon: ## Re-render the app icon from scripts/make-icon.swift
+build: test build-ios build-macos ## Test the core and compile every app target
+
+icon: ## Re-render the iOS and macOS app icons from scripts/make-icon.swift
 	swift scripts/make-icon.swift iOS/App/Assets.xcassets/AppIcon.appiconset/AppIcon.png
+	swift scripts/make-icon.swift build/mac-icon.png --mac
+	@for s in 16 32 64 128 256 512 1024; do \
+		sips -z $$s $$s build/mac-icon.png --out macOS/App/Assets.xcassets/AppIcon.appiconset/icon_$$s.png >/dev/null; \
+	done
 
 clean: ## Remove build output
 	rm -rf build AlexaKit/.build

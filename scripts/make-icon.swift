@@ -1,17 +1,40 @@
 #!/usr/bin/env swift
 // Renders the 1024×1024 app icon (gradient + SF Symbols) so the repo has no opaque design files.
-// Usage: swift scripts/make-icon.swift <output.png>
+// Usage: swift scripts/make-icon.swift <output.png> [--mac]
+//   --mac  draws the macOS shape (rounded square with margin and shadow on a transparent canvas)
 import AppKit
 
 let output = CommandLine.arguments.dropFirst().first ?? "AppIcon.png"
+let mac = CommandLine.arguments.contains("--mac")
 let size = 1024.0
 
 // Draw straight into an opaque 1024px bitmap (App Store icons must not have alpha).
 let cg = CGContext(data: nil, width: 1024, height: 1024, bitsPerComponent: 8, bytesPerRow: 0,
                    space: CGColorSpace(name: CGColorSpace.sRGB)!,
-                   bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue)!
+                   bitmapInfo: (mac ? CGImageAlphaInfo.premultipliedLast : CGImageAlphaInfo.noneSkipLast).rawValue)!
 NSGraphicsContext.saveGraphicsState()
 NSGraphicsContext.current = NSGraphicsContext(cgContext: cg, flipped: false)
+
+if mac {
+    // macOS icon grid: 824pt rounded square centred on a 1024 canvas, with a soft shadow.
+    let tile = NSRect(x: 100, y: 100, width: 824, height: 824)
+    let path = NSBezierPath(roundedRect: tile, xRadius: 185, yRadius: 185)
+    let shadow = NSShadow()
+    shadow.shadowColor = NSColor.black.withAlphaComponent(0.3)
+    shadow.shadowBlurRadius = 24
+    shadow.shadowOffset = NSSize(width: 0, height: -10)
+    NSGraphicsContext.saveGraphicsState()
+    shadow.set()
+    NSColor.black.setFill()
+    path.fill()
+    NSGraphicsContext.restoreGraphicsState()
+    path.addClip()
+    // Scale the artwork into the tile.
+    let transform = NSAffineTransform()
+    transform.translateX(by: 100, yBy: 100)
+    transform.scale(by: 824.0 / 1024.0)
+    transform.concat()
+}
 
 let gradient = NSGradient(colors: [
     NSColor(calibratedRed: 0.36, green: 0.27, blue: 0.95, alpha: 1),
