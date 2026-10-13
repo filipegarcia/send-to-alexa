@@ -8,18 +8,16 @@
 // Usage:
 //   swift scripts/make-icon.swift <output.png>            iOS icon (1024, full bleed, opaque)
 //   swift scripts/make-icon.swift <output.png> --mac      macOS icon (1024, rounded tile + shadow)
-//   add --small for the 16–64 px variants (bigger, outlined mark)
+//   add --small for the 16–64 px variants (white tile, red mark — readable in menus)
 //   swift scripts/make-icon.swift <output.png> --glyph N  menu bar template glyph (N×N px, black on clear)
-//   add --ring-white for a white ring instead of Alexa-cyan
 import AppKit
 
 let args = CommandLine.arguments
 let output = args.dropFirst().first ?? "AppIcon.png"
 let mac = args.contains("--mac")
-/// Small sizes (16–64 px): bigger mark, dark outline, no soft shadow — readable in menus and lists.
+/// Small sizes (16–64 px): inverted colours (white tile, red mark), slightly bigger mark.
 let small = args.contains("--small")
 let glyphSize = args.firstIndex(of: "--glyph").flatMap { Int(args[$0 + 1]) }
-let cyanRing = !args.contains("--ring-white")
 
 // MARK: - The mark, in a 1024×1024 design space (origin bottom-left)
 
@@ -139,59 +137,44 @@ if mac {
     transform.concat()
 }
 
-let alexaCyan = NSGradient(colors: [
-    NSColor(srgbRed: 0.35, green: 0.88, blue: 1.00, alpha: 1),
-    NSColor(srgbRed: 0.00, green: 0.62, blue: 0.95, alpha: 1),
-])!
-
 // Apple Music–style red: #FB5C74 (top) → #FA233B (bottom).
-NSGradient(colors: [
+let appleRed = NSGradient(colors: [
     NSColor(srgbRed: 251 / 255, green: 92 / 255, blue: 116 / 255, alpha: 1),
     NSColor(srgbRed: 250 / 255, green: 35 / 255, blue: 59 / 255, alpha: 1),
-])!.draw(in: NSRect(x: 0, y: 0, width: 1024, height: 1024), angle: -90)
+])!
+let canvas = NSRect(x: 0, y: 0, width: 1024, height: 1024)
 
 if small {
-    // Enlarge the mark around its centre so it survives being shrunk to 16–32 px.
+    // Small sizes (menus, share sheet, lists): inverted — white tile, red mark — so it stays readable on the
+    // red menu highlight and on dark menus. Mark enlarged a little to survive 16–32 px.
+    NSColor.white.setFill()
+    canvas.fill()
     let t = NSAffineTransform()
     t.translateX(by: 512, yBy: 505)
     t.scale(by: 1.1)
     t.translateX(by: -512, yBy: -505)
     t.concat()
-}
-
-// Dark outline around ring + tail and note: separates cyan/white from the red, especially when small.
-let outline = NSColor(srgbRed: 0.30, green: 0.02, blue: 0.08, alpha: small ? 0.75 : 0.45)
-for shape in [ringPath(), tailPath(), notePath()] {
-    outline.setStroke()
-    shape.lineWidth = small ? 32 : 22
-    shape.lineJoinStyle = .round
-    shape.stroke()
-}
-
-// Soft shadow under the mark for depth.
-let markShadow = NSShadow()
-markShadow.shadowColor = NSColor(srgbRed: 0.45, green: 0, blue: 0.08, alpha: 0.35)
-markShadow.shadowBlurRadius = 30
-markShadow.shadowOffset = NSSize(width: 0, height: -12)
-NSGraphicsContext.saveGraphicsState()
-if !small { markShadow.set() }
-
-// Ring and tail are painted with one canvas-wide gradient (clipped to each), so the colour flows through both.
-if cyanRing {
-    for shape in [ringPath(), tailPath()] {
+    for shape in [ringPath(), tailPath(), notePath()] {
         NSGraphicsContext.saveGraphicsState()
         shape.addClip()
-        alexaCyan.draw(in: NSRect(x: 0, y: 0, width: 1024, height: 1024), angle: -90)
+        appleRed.draw(in: canvas, angle: -90)
         NSGraphicsContext.restoreGraphicsState()
     }
 } else {
+    // Regular icon: white mark on red, with a soft shadow for depth.
+    appleRed.draw(in: canvas, angle: -90)
+    let markShadow = NSShadow()
+    markShadow.shadowColor = NSColor(srgbRed: 0.45, green: 0, blue: 0.08, alpha: 0.35)
+    markShadow.shadowBlurRadius = 30
+    markShadow.shadowOffset = NSSize(width: 0, height: -12)
+    NSGraphicsContext.saveGraphicsState()
+    markShadow.set()
     NSColor.white.setFill()
     ringPath().fill()
     tailPath().fill()
+    notePath().fill()
+    NSGraphicsContext.restoreGraphicsState()
 }
-NSColor.white.setFill()
-notePath().fill()
-NSGraphicsContext.restoreGraphicsState()
 
 NSGraphicsContext.restoreGraphicsState()
 save(context, to: output)

@@ -206,7 +206,7 @@ The Amazon sign-in and Alexa API details come from the excellent work in
 
 ## Icon
 
-The icon, a speech-bubble ring around a music note on red, is original artwork drawn from vector shapes by
+The icon, a white speech-bubble ring around a music note on red (reversed to a red mark on white at menu sizes), is original artwork drawn from vector shapes by
 [`scripts/make-icon.swift`](scripts/make-icon.swift). Run `make icon` to regenerate the iOS and macOS icons and
 the menu bar glyph. It isn't Amazon's or Apple's logo, and it doesn't use SF Symbols, whose license excludes
 app icons.
