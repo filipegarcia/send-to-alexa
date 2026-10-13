@@ -72,6 +72,7 @@ swift run alexa-send login --region amazon.de        # your Alexa country; opens
 swift run alexa-send devices                         # * marks the default device
 swift run alexa-send play --device Kitchen "https://music.apple.com/de/album/better-together/1440857781?i=1440857786"
 swift run alexa-send play "Today's Hits playlist"    # any search works too
+swift run alexa-send play --check --device Kitchen "Bohemian Rhapsody by Queen"   # ask Alexa to validate only — silent
 swift run alexa-send --help
 ```
 

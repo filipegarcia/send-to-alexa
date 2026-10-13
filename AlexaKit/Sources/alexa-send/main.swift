@@ -14,7 +14,7 @@ USAGE
   alexa-send default <device name or serial>
   alexa-send provider <APPLE_MUSIC|AMAZON_MUSIC|SPOTIFY|DEEZER|TUNEIN|I_HEART_RADIO>
   alexa-send resolve <apple music url | text>
-  alexa-send play [--device <name>] [--provider <id>] [--dry-run] <apple music url | search phrase...>
+  alexa-send play [--device <name>] [--provider <id>] [--dry-run | --check] <apple music url | search phrase...>
   alexa-send speak [--device <name>] <text...>
   alexa-send providers
   alexa-send logout
@@ -105,7 +105,7 @@ func run() async throws {
         return
     }
     arguments.removeFirst()
-    let args = Args(arguments, switches: ["all", "json", "dry-run", "help", "no-open"])
+    let args = Args(arguments, switches: ["all", "json", "dry-run", "check", "help", "no-open"])
     if args.switches.contains("help") || command == "help" || command == "--help" || command == "-h" {
         print(usage)
         return
@@ -217,6 +217,14 @@ func run() async throws {
             return
         }
         let device = try await resolveDevice(args.options["device"])
+        if args.switches.contains("check") {
+            // Ask Alexa to validate the request without playing anything.
+            let sanitized = try await app.client().checkPlay(
+                music.searchPhrase, provider: provider ?? app.store.loadPreferences().provider, on: device
+            )
+            print("✓ Alexa accepts \"\(music.searchPhrase)\" for \(device.accountName) (searches: \"\(sanitized)\"). Nothing was played.")
+            return
+        }
         let sanitized = try await app.play(music.searchPhrase, on: device, provider: provider)
         print("▶︎ \(device.accountName): \(music.searchPhrase)\(sanitized != music.searchPhrase ? "  (Alexa: \"\(sanitized)\")" : "")")
 

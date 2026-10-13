@@ -90,6 +90,31 @@ struct ClientTests {
         #expect(payload["sanitizedSearchPhrase"] as? String == "x")
     }
 
+    @Test func checkPlayValidatesWithoutPlaying() async throws {
+        let transport = MockTransport { _ in
+            .json(["result": "VALID", "operationPayload": ["sanitizedSearchPhrase": "rumours by fleetwood mac"]])
+        }
+        let client = AlexaClient(credentials: .fixture(), transport: transport)
+        let sanitized = try await client.checkPlay("Rumours by Fleetwood Mac", on: .kitchen)
+        #expect(sanitized == "rumours by fleetwood mac")
+        #expect(transport.requests.map { $0.url!.path } == ["/api/behaviors/operation/validate"])
+    }
+
+    @Test func defaultPrefersAnOnlineEchoOverGroupsAndTVs() throws {
+        let devices = EchoDevice.musicTargets(try JSONDecoder().decode(
+            [String: [EchoDevice]].self,
+            from: JSONSerialization.data(withJSONObject: Self.devicesJSON)
+        )["devices"]!)
+        #expect(devices.first?.accountName == "Everywhere", "groups sort first alphabetically…")
+        #expect(SendToAlexa.suggestedDefault(in: devices)?.accountName == "Kitchen", "…but aren't the default")
+        let onlyGroupAndTV = [
+            EchoDevice(accountName: "Everywhere", serialNumber: "G", deviceType: "T", deviceFamily: "WHA", deviceOwnerCustomerId: "C"),
+            EchoDevice(accountName: "TV", serialNumber: "F", deviceType: "T", deviceFamily: "FIRE_TV", deviceOwnerCustomerId: "C"),
+        ]
+        #expect(SendToAlexa.suggestedDefault(in: onlyGroupAndTV)?.accountName == "TV")
+        #expect(SendToAlexa.suggestedDefault(in: []) == nil)
+    }
+
     @Test func invalidSearchIsReported() async {
         let transport = MockTransport { _ in .json(["result": "INVALID", "message": "Provider not linked"]) }
         let client = AlexaClient(credentials: .fixture(), transport: transport)

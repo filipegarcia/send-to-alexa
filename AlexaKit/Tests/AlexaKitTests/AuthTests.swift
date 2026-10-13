@@ -98,11 +98,21 @@ struct AuthTests {
 
     @Test func surfacesRegistrationErrors() async {
         let transport = MockTransport { _ in
-            .json(["response": ["error": ["code": "InvalidValue", "message": "The authorization code is invalid"]]], status: 400)
+            .json(["response": ["error": ["code": "Unauthorized", "message": "Account is locked"]]], status: 400)
         }
-        await #expect(throws: AlexaError.signInFailed("The authorization code is invalid")) {
+        await #expect(throws: AlexaError.signInFailed("Account is locked")) {
             try await AmazonAuth(transport: transport).register(AmazonLoginRequest(region: .unitedStates), authorizationCode: "bad")
         }
+    }
+
+    @Test func explainsExpiredAuthorizationCodes() async throws {
+        let transport = MockTransport { _ in
+            .json(["response": ["error": ["code": "InvalidValue", "message": "One or more provided values are invalid."]]], status: 400)
+        }
+        let error = await #expect(throws: AlexaError.self) {
+            try await AmazonAuth(transport: transport).register(AmazonLoginRequest(region: .unitedStates), authorizationCode: "old")
+        }
+        #expect(error?.localizedDescription.contains("expired") == true)
     }
 
     @Test func revokedRefreshTokenMeansSessionExpired() async {

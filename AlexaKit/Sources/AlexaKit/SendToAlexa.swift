@@ -62,10 +62,21 @@ public struct SendToAlexa: Sendable {
         try store.updatePreferences { prefs in
             prefs.cachedDevices = devices
             if prefs.defaultDeviceSerial == nil || !devices.contains(where: { $0.serialNumber == prefs.defaultDeviceSerial }) {
-                prefs.defaultDeviceSerial = devices.first(where: { $0.online ?? true })?.serialNumber ?? devices.first?.serialNumber
+                prefs.defaultDeviceSerial = Self.suggestedDefault(in: devices)?.serialNumber
             }
         }
         return devices
+    }
+
+    /// A sensible default: an online Echo speaker, then any online single device, then anything.
+    /// Speaker groups come last because Amazon doesn't always accept them for this action.
+    static func suggestedDefault(in devices: [EchoDevice]) -> EchoDevice? {
+        let online = devices.filter { $0.online ?? true }
+        return online.first { $0.deviceFamily == "ECHO" }
+            ?? online.first { !$0.isSpeakerGroup && $0.deviceFamily != "FIRE_TV" }
+            ?? online.first { !$0.isSpeakerGroup }
+            ?? online.first
+            ?? devices.first
     }
 
     // MARK: Play

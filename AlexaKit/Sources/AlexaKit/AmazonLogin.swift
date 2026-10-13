@@ -181,8 +181,12 @@ public struct AmazonAuth: Sendable {
             let refreshToken = bearer["refresh_token"] as? String
         else {
             let error = (json?["response"] as? [String: Any])?["error"] as? [String: Any]
-            let message = (error?["message"] as? String) ?? (error?["code"] as? String)
+            var message = (error?["message"] as? String) ?? (error?["code"] as? String)
                 ?? "HTTP \(response.statusCode) \(String(decoding: data.prefix(300), as: UTF8.self))"
+            if error?["code"] as? String == "InvalidValue" {
+                // Most common cause: the authorization code is single-use and expires after ~5 minutes.
+                message += " (the sign-in code may have expired — codes are valid for a few minutes; sign in again)"
+            }
             throw AlexaError.signInFailed(message)
         }
         let extensions = success?["extensions"] as? [String: Any]

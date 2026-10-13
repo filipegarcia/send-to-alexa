@@ -52,6 +52,26 @@ public actor AlexaClient {
     /// Returns the phrase after Alexa's sanitising (what it'll actually search for).
     @discardableResult
     public func play(_ searchPhrase: String, provider: MusicProvider = .appleMusic, on device: EchoDevice) async throws -> String {
+        let operationPayload = try await validatedPlayPayload(searchPhrase, provider: provider, on: device)
+        // Run a one-off routine ("PREVIEW") containing the music node.
+        try await runSequence(node: [
+            "@type": "com.amazon.alexa.behaviors.model.OpaquePayloadOperationNode",
+            "type": "Alexa.Music.PlaySearchPhrase",
+            "operationPayload": operationPayload,
+        ])
+        return (operationPayload["sanitizedSearchPhrase"] as? String) ?? searchPhrase
+    }
+
+    /// Asks Alexa to validate a play request **without playing anything**.
+    /// Returns the sanitised phrase. Throws `AlexaError.invalidSearch` if Alexa rejects it.
+    @discardableResult
+    public func checkPlay(_ searchPhrase: String, provider: MusicProvider = .appleMusic, on device: EchoDevice) async throws -> String {
+        let payload = try await validatedPlayPayload(searchPhrase, provider: provider, on: device)
+        return (payload["sanitizedSearchPhrase"] as? String) ?? searchPhrase
+    }
+
+    /// Step 1 of playing: Alexa normalises the phrase and tells us if the provider/device combo is OK.
+    private func validatedPlayPayload(_ searchPhrase: String, provider: MusicProvider, on device: EchoDevice) async throws -> [String: Any] {
         let phrase = searchPhrase.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !phrase.isEmpty else { throw AlexaError.invalidSearch("search phrase is empty") }
 
@@ -64,7 +84,6 @@ public actor AlexaClient {
             "searchPhrase": phrase,
         ]
 
-        // 1) Validate: Alexa normalises the phrase and tells us if the provider/device combo is OK.
         var operationPayload = basePayload
         let validateBody: [String: Any] = [
             "type": "Alexa.Music.PlaySearchPhrase",
@@ -85,14 +104,7 @@ public actor AlexaClient {
             guard case .http = error else { throw error }
             operationPayload["sanitizedSearchPhrase"] = Self.sanitize(phrase)
         }
-
-        // 2) Run a one-off routine ("PREVIEW") containing the music node.
-        try await runSequence(node: [
-            "@type": "com.amazon.alexa.behaviors.model.OpaquePayloadOperationNode",
-            "type": "Alexa.Music.PlaySearchPhrase",
-            "operationPayload": operationPayload,
-        ])
-        return (operationPayload["sanitizedSearchPhrase"] as? String) ?? phrase
+        return operationPayload
     }
 
     /// Makes `device` say `text`. Handy to check that a device is reachable.
